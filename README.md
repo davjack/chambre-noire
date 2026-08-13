@@ -15,7 +15,7 @@ whatever is written can be spoken aloud.
 |---|---------|---------------------|---------------|
 | 0 | Regarde bien | Touches the black wall | The world walks in, upside down |
 | 1 | La lumière va tout droit | Moves a lamp, blocks it with a hand | Rays are straight; shadows follow |
-| 2 | Sans trou, tout est blanc | Opens the window wide | Every point lights the whole wall: no picture |
+| 2 | Sans trou, pas d'image | Opens the window wide | Every point lights the whole wall: no picture |
 | 3 | Le petit trou range la lumière | Closes it to a pinhole | Each point finds its own place |
 | 4 | Pourquoi c'est à l'envers | Lifts the figure, in two views | Rays cross at the hole — both axes flip |
 | 5 | Grand trou ou petit trou ? | Slides the aperture | Sharp or bright: pick one |
@@ -73,8 +73,8 @@ without a rebuild. No environment variables, no backend, nothing to configure.
   tests, not asserted in prose.
 - **Works without a voice**: `speechSynthesis` is an enhancement; the text is
   always on screen.
-- **Works without WebGL2**: chapter 5 falls back to a canvas renderer driven by
-  the same `optics.ts` numbers, and says so.
+- **Works without WebGL2**: chapters 0 and 5 fall back to an interactive canvas
+  renderer driven by the same `optics.ts` numbers, and say so on screen.
 - **Respects `prefers-reduced-motion`**: every scene is readable from its static
   frame.
 

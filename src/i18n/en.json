@@ -14,7 +14,6 @@
   "sound.unavailable": "No voice on this device. The words stay on screen.",
 
   "lang.switch": "Français",
-  "lang.switchLabel": "Switch to French",
 
   "unit.mm": "{value} mm",
   "unit.cm": "{value} cm",
@@ -22,7 +21,7 @@
   "meter.sharpness": "Sharp",
   "meter.brightness": "Bright",
 
-  "fallback.webgl": "This device can't run the moving simulation. Here are still pictures: they show the same thing.",
+  "fallback.webgl": "Your device draws the picture another way. It works the same.",
 
   "chapter.wow.title": "Look closely",
   "chapter.wow.say.closed": "Touch the black wall.",

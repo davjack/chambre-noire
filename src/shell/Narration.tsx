@@ -82,6 +82,19 @@ export function Narration({ text }: { text: string }) {
   const { soundEnabled } = useSettings()
   const { speak, cancel, hasVoice } = useSpeech()
 
+  /*
+   * The live region has to exist *before* it has anything to say.
+   *
+   * Navigating remounts the whole chapter, so the region and its first
+   * sentence would otherwise enter the DOM in the same commit — and a live
+   * region inserted already full is not announced by any screen reader. The
+   * app's central promise would then break at exactly the moment it matters,
+   * the change of chapter. Rendering empty for one commit and filling it in an
+   * effect is what makes the change a *change*.
+   */
+  const [announced, setAnnounced] = useState('')
+  useEffect(() => setAnnounced(text), [text])
+
   useEffect(() => {
     if (!soundEnabled || !hasVoice) return
     speak(text)
@@ -95,7 +108,7 @@ export function Narration({ text }: { text: string }) {
           aria-live="polite"
           className="flex-1 text-balance text-center text-xl font-semibold text-ink sm:text-2xl"
         >
-          {text}
+          {announced}
         </p>
         {hasVoice ? (
           <button

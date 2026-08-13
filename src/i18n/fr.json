@@ -14,7 +14,6 @@
   "sound.unavailable": "Pas de voix sur cet appareil. Le texte reste affiché.",
 
   "lang.switch": "English",
-  "lang.switchLabel": "Passer en anglais",
 
   "unit.mm": "{value} mm",
   "unit.cm": "{value} cm",
@@ -22,7 +21,7 @@
   "meter.sharpness": "Net",
   "meter.brightness": "Lumineux",
 
-  "fallback.webgl": "Cet appareil ne peut pas faire la simulation animée. Voici des images fixes : elles montrent la même chose.",
+  "fallback.webgl": "Ton appareil dessine l'image autrement. Le résultat est le même.",
 
   "chapter.wow.title": "Regarde bien",
   "chapter.wow.say.closed": "Touche le mur noir.",

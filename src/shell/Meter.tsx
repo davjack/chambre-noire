@@ -19,6 +19,7 @@ export function Meter({
   colour: string
 }) {
   const clamped = Math.min(1, Math.max(0, value))
+  const percent = Math.round(clamped * 100)
   return (
     <div className="flex items-center gap-3">
       <span className="w-28 shrink-0 text-sm font-semibold text-muted">{label}</span>
@@ -30,8 +31,14 @@ export function Meter({
         aria-label={label}
         style={{ '--meter-colour': colour } as CSSProperties}
       >
-        {Math.round(clamped * 100)}%
+        {percent}%
       </meter>
+      {/* The `<meter>` fallback content only renders where the element is
+          unsupported, so it reaches nobody here. This span is how a screen
+          reader — and anyone comparing two runs — gets the number. */}
+      <span className="w-12 shrink-0 text-right font-mono text-sm text-muted tabular-nums">
+        {percent}%
+      </span>
     </div>
   )
 }

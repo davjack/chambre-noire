@@ -19,6 +19,9 @@ import { ChapterShell } from '../shell/ChapterShell'
 const OBJECT_DISTANCE = 430
 const BOX_LENGTH = 300
 const FIGURE_HEIGHT = 250
+/** Above this the child has not moved the slider yet. */
+const UNTOUCHED_ABOVE = 340
+/** Below this the wall starts showing something again. */
 const WIDE_ENOUGH = 150
 const WASH_POINTS = [
   -0.45, -0.375, -0.3, -0.225, -0.15, -0.075, 0, 0.075, 0.15, 0.225, 0.3, 0.375, 0.45,
@@ -34,13 +37,18 @@ export function NoHoleChapter() {
     apertureDiameter: windowSize,
   })
 
-  const narrationKey =
-    windowSize > WIDE_ENOUGH ? 'chapter.no-hole.say.wide' : 'chapter.no-hole.say.narrow'
+  // Three plainly named bands, in the order the child crosses them.
+  const narration =
+    windowSize > UNTOUCHED_ABOVE
+      ? 'chapter.no-hole.say'
+      : windowSize > WIDE_ENOUGH
+        ? 'chapter.no-hole.say.wide'
+        : 'chapter.no-hole.say.narrow'
 
   return (
     <ChapterShell
       slug="no-hole"
-      narration={t(windowSize > 340 ? 'chapter.no-hole.say' : narrationKey)}
+      narration={t(narration)}
       controls={
         <BigSlider
           label={t('chapter.no-hole.window')}

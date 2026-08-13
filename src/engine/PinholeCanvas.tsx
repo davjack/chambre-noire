@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { diffractionBlur, geometricBlur } from '../physics/optics'
 import { createWorldCanvas } from './sceneTexture'
@@ -35,6 +35,40 @@ function compile(gl: WebGL2RenderingContext, type: number, source: string): WebG
   return shader
 }
 
+/**
+ * Can this device run the real simulation?
+ *
+ * Asked on a throwaway canvas, and that is the whole point: a canvas that has
+ * once handed out a WebGL context can never hand out a 2D one, so probing on
+ * the canvas we intend to draw into would burn the fallback whenever the
+ * context exists but the program fails to compile — a black rectangle, and no
+ * way back.
+ */
+function webgl2CanRunTheShader(): boolean {
+  const probe = document.createElement('canvas')
+  const gl = probe.getContext('webgl2')
+  if (!gl) return false
+
+  const vertex = compile(gl, gl.VERTEX_SHADER, vertexSource)
+  const fragment = compile(gl, gl.FRAGMENT_SHADER, fragmentSource)
+  const program = vertex && fragment ? gl.createProgram() : null
+
+  let linked = false
+  if (program && vertex && fragment) {
+    gl.attachShader(program, vertex)
+    gl.attachShader(program, fragment)
+    gl.linkProgram(program)
+    linked = Boolean(gl.getProgramParameter(program, gl.LINK_STATUS))
+  }
+
+  if (vertex) gl.deleteShader(vertex)
+  if (fragment) gl.deleteShader(fragment)
+  if (program) gl.deleteProgram(program)
+  gl.getExtension('WEBGL_lose_context')?.loseContext()
+
+  return linked
+}
+
 /** Physical blur radii expressed as a fraction of the wall — what the shader wants. */
 function radii(params: PinholeParams) {
   const geometric =
@@ -69,14 +103,22 @@ function createWebglRenderer(canvas: HTMLCanvasElement, world: HTMLCanvasElement
   const vertex = compile(gl, gl.VERTEX_SHADER, vertexSource)
   const fragment = compile(gl, gl.FRAGMENT_SHADER, fragmentSource)
   const program = gl.createProgram()
-  if (!vertex || !fragment || !program) return null
+  if (!vertex || !fragment || !program) {
+    if (vertex) gl.deleteShader(vertex)
+    if (fragment) gl.deleteShader(fragment)
+    if (program) gl.deleteProgram(program)
+    return null
+  }
 
   gl.attachShader(program, vertex)
   gl.attachShader(program, fragment)
   gl.linkProgram(program)
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return null
   gl.deleteShader(vertex)
   gl.deleteShader(fragment)
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    gl.deleteProgram(program)
+    return null
+  }
 
   const texture = gl.createTexture()
   gl.bindTexture(gl.TEXTURE_2D, texture)
@@ -86,9 +128,12 @@ function createWebglRenderer(canvas: HTMLCanvasElement, world: HTMLCanvasElement
   // plausible, which is exactly what makes the bug worth a comment.
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true)
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, world)
+  // Mip levels are what let 64 samples cover a wide aperture disc without
+  // leaving visible copies of the house behind.
+  gl.generateMipmap(gl.TEXTURE_2D)
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR)
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
 
   const vao = gl.createVertexArray()
@@ -99,16 +144,18 @@ function createWebglRenderer(canvas: HTMLCanvasElement, world: HTMLCanvasElement
     diff: gl.getUniformLocation(program, 'uDiffRadius'),
     exposure: gl.getUniformLocation(program, 'uExposure'),
     aspect: gl.getUniformLocation(program, 'uAspect'),
+    texSize: gl.getUniformLocation(program, 'uTexSize'),
     samples: gl.getUniformLocation(program, 'uSamples'),
   }
 
   return {
     render(params) {
+      if (gl.isContextLost()) return
       const { width, height } = sizeCanvas(canvas)
       const { geometric, diffraction } = radii(params)
 
       // Enough samples to cover the blur disc without banding, never more than
-      // the shader's ceiling. A sharp image costs almost nothing.
+      // the shader's ceiling. Beyond that the mip level takes over.
       const spreadInPixels = Math.max(geometric, diffraction) * height
       const samples = Math.min(64, Math.max(12, Math.round(spreadInPixels * 1.6)))
 
@@ -122,6 +169,7 @@ function createWebglRenderer(canvas: HTMLCanvasElement, world: HTMLCanvasElement
       gl.uniform1f(uniforms.diff, diffraction)
       gl.uniform1f(uniforms.exposure, params.exposure)
       gl.uniform1f(uniforms.aspect, width / height)
+      gl.uniform2f(uniforms.texSize, world.width, world.height)
       gl.uniform1i(uniforms.samples, samples)
       gl.drawArrays(gl.TRIANGLES, 0, 3)
     },
@@ -129,6 +177,11 @@ function createWebglRenderer(canvas: HTMLCanvasElement, world: HTMLCanvasElement
       gl.deleteProgram(program)
       gl.deleteTexture(texture)
       gl.deleteVertexArray(vao)
+      // Browsers cap live WebGL contexts (Chrome at 16) and evict the oldest
+      // when the cap is hit. Every chapter change remounts this component, so
+      // letting contexts linger until GC would eventually cost another chapter
+      // its picture.
+      gl.getExtension('WEBGL_lose_context')?.loseContext()
     },
   }
 }
@@ -188,7 +241,12 @@ export interface PinholeCanvasProps extends PinholeParams {
 export function PinholeCanvas({ className, onFallback, ...params }: PinholeCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const rendererRef = useRef<Renderer | null>(null)
-  const [, forceRender] = useState(0)
+  /** Bumped to rebuild the renderer — only when the context itself changed. */
+  const [generation, setGeneration] = useState(0)
+  /** Bumped to redraw with the existing renderer, which is much cheaper. */
+  const [, redraw] = useState(0)
+  const rebuild = useCallback(() => setGeneration((current) => current + 1), [])
+  const requestRedraw = useCallback(() => redraw((current) => current + 1), [])
 
   const { holeDiameter, boxLength, objectDistance, wallHeight, exposure } = params
 
@@ -197,32 +255,43 @@ export function PinholeCanvas({ className, onFallback, ...params }: PinholeCanva
     if (!canvas) return
 
     const world = createWorldCanvas()
-    let renderer = createWebglRenderer(canvas, world)
-    onFallback?.(renderer === null)
-    if (!renderer) renderer = createCanvas2dRenderer(canvas, world)
+    const canUseShader = webgl2CanRunTheShader()
+    const renderer = canUseShader
+      ? createWebglRenderer(canvas, world)
+      : createCanvas2dRenderer(canvas, world)
     rendererRef.current = renderer
+    onFallback?.(!canUseShader || renderer === null)
 
-    // A lost context is common on tablets that sleep mid-lesson. Re-render on
-    // the next frame rather than leaving a black rectangle on screen.
+    /*
+     * A tablet that sleeps mid-lesson comes back with a lost context. The two
+     * halves of the protocol have to be here together: `preventDefault` on the
+     * loss is what makes the browser promise a restore, and the restore
+     * handler is what turns that promise into a picture again. Only one of
+     * them, and the canvas stays black for good.
+     */
     const onLost = (event: Event) => {
       event.preventDefault()
       rendererRef.current = null
-      onFallback?.(true)
     }
+    const onRestored = () => rebuild()
     canvas.addEventListener('webglcontextlost', onLost)
+    canvas.addEventListener('webglcontextrestored', onRestored)
 
-    const observer = new ResizeObserver(() => forceRender((n) => n + 1))
+    // A resize only needs a redraw: rebuilding would throw away a perfectly
+    // good context and its texture every time the window moves a pixel.
+    const observer = new ResizeObserver(requestRedraw)
     observer.observe(canvas)
-
-    forceRender((n) => n + 1)
+    requestRedraw()
 
     return () => {
       canvas.removeEventListener('webglcontextlost', onLost)
+      canvas.removeEventListener('webglcontextrestored', onRestored)
       observer.disconnect()
       rendererRef.current?.dispose()
       rendererRef.current = null
     }
-  }, [onFallback])
+    // `generation` is the rebuild trigger, not a value this effect reads.
+  }, [onFallback, rebuild, requestRedraw, generation])
 
   useEffect(() => {
     rendererRef.current?.render({

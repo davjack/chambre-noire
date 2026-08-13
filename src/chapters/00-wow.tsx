@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import { PinholeCanvas } from '../engine/PinholeCanvas'
 import { useT } from '../i18n/useT'
@@ -20,15 +20,24 @@ const WALL_HEIGHT_MM = 85
 export function WowChapter() {
   const t = useT()
   const [open, setOpen] = useState(false)
+  const [usingFallback, setUsingFallback] = useState(false)
+  const onFallback = useCallback((fallback: boolean) => setUsingFallback(fallback), [])
 
   return (
     <ChapterShell
       slug="wow"
       narration={t(open ? 'chapter.wow.say.open' : 'chapter.wow.say.closed')}
       controls={
-        open ? (
-          <p className="text-center text-lg font-semibold text-ray">{t('chapter.wow.cta')}</p>
-        ) : null
+        <div className="flex flex-col gap-1">
+          {open ? (
+            <p className="text-center text-lg font-semibold text-ray">{t('chapter.wow.cta')}</p>
+          ) : null}
+          {/* The very first screen of the app is the worst place to leave a
+              child looking at a black square with no explanation. */}
+          {usingFallback ? (
+            <p className="text-center text-sm text-muted">{t('fallback.webgl')}</p>
+          ) : null}
+        </div>
       }
     >
       <button
@@ -45,6 +54,7 @@ export function WowChapter() {
           objectDistance={OBJECT_DISTANCE_MM}
           wallHeight={WALL_HEIGHT_MM}
           exposure={1}
+          onFallback={onFallback}
         />
         {open ? null : (
           <span className="absolute inset-0 grid place-items-center">

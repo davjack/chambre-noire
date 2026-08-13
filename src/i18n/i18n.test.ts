@@ -43,6 +43,13 @@ describe('dictionaries', () => {
     const tooLong = spoken.filter((key) => fr[key].length > 90 || en[key].length > 90)
     expect(tooLong).toEqual([])
   })
+
+  it('keeps every other string short too — the cap was escaping non-.say keys', () => {
+    const tooLong = (Object.keys(fr) as Key[]).filter(
+      (key) => fr[key].length > 100 || en[key].length > 100,
+    )
+    expect(tooLong).toEqual([])
+  })
 })
 
 describe('translate', () => {

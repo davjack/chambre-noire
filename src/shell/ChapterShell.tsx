@@ -31,12 +31,17 @@ export function ChapterShell({ slug, narration, children, controls }: ChapterShe
 
   return (
     /*
-     * Fixed to the viewport rather than growing with its content: the scene,
-     * the sentence being spoken and the Next button all have to be visible at
-     * once, on a laptop as much as on a tablet. The scene is the only part
-     * that gives ground, and it does so by shrinking to whatever is left.
+     * The scene, the sentence being spoken and the Next button should all be
+     * visible at once, so the scene shrinks to whatever the others leave.
+     *
+     * But it shrinks only down to a floor, and the page is allowed to grow past
+     * the viewport below that. Pinning the height and clipping the overflow —
+     * the first version of this — put the Next button off-screen and out of
+     * reach of the keyboard at 200 % browser zoom, which is a failure of WCAG
+     * 1.4.4 and 1.4.10, not a cosmetic one. A page that scrolls is worse than a
+     * page that fits, and far better than a page you cannot finish.
      */
-    <div className="flex h-dvh flex-col gap-2 overflow-hidden pb-[env(safe-area-inset-bottom)]">
+    <div className="flex min-h-dvh flex-col gap-2 pb-[env(safe-area-inset-bottom)]">
       <a
         href="#scene"
         className="sr-only focus:not-sr-only focus:absolute focus:left-3 focus:top-3 focus:z-50 focus:rounded-full focus:bg-ray focus:px-5 focus:py-3 focus:font-bold focus:text-night"
@@ -47,19 +52,23 @@ export function ChapterShell({ slug, narration, children, controls }: ChapterShe
       <header className="flex items-center justify-between gap-3 px-4 pt-3">
         <p className="text-sm font-bold uppercase tracking-wider text-muted">{t('app.title')}</p>
         <div className="flex items-center gap-2">
+          {/* No `aria-pressed`: the label already says what the next press
+              does. Carrying both makes a screen reader announce "Sound off,
+              toggle button, pressed", which states the opposite of the truth. */}
           <button
             type="button"
             className="pill !min-h-11 !px-4 text-sm"
             onClick={() => setSoundEnabled(!soundEnabled)}
-            aria-pressed={soundEnabled}
           >
             {soundEnabled ? t('sound.disable') : t('sound.enable')}
           </button>
+          {/* No `aria-label` either: it read "Passer en anglais" over a button
+              labelled "English", so voice control could not act on what it saw
+              — WCAG 2.5.3 Label in Name. The visible word is the better name. */}
           <button
             type="button"
             className="pill !min-h-11 !px-4 text-sm"
             onClick={() => setLocale(locale === 'fr' ? 'en' : 'fr')}
-            aria-label={t('lang.switchLabel')}
           >
             {t('lang.switch')}
           </button>
@@ -102,7 +111,7 @@ export function ChapterShell({ slug, narration, children, controls }: ChapterShe
         {t(chapterOrder[index]?.titleKey ?? 'app.title')}
       </h1>
 
-      <main id="scene" tabIndex={-1} className="relative min-h-0 flex-1 px-3">
+      <main id="scene" tabIndex={-1} className="relative min-h-[30vh] flex-1 px-3">
         {/* Absolute so the children get a definite height to size against —
             `h-full` inside a plain flex item would have nothing to resolve. */}
         <div className="absolute inset-0 flex items-center justify-center">{children}</div>

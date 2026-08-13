@@ -68,10 +68,46 @@ test('progress survives a reload', async ({ page }) => {
   await page.goto('/#/the-hole')
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
 
+  // Assert the stored progress, not just that the page came back: the first
+  // version of this test would have passed with `writeStored` completely
+  // broken.
+  const visited = () =>
+    page.evaluate(() => JSON.parse(localStorage.getItem('petit-trou:visited') ?? '[]') as string[])
+  expect(await visited()).toContain('the-hole')
+
   await page.reload()
   await expect(page).toHaveURL(/#\/the-hole$/)
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+  expect(await visited()).toContain('the-hole')
 })
+
+test('navigating moves focus into the new chapter', async ({ page }) => {
+  await page.goto('/#/wow')
+  await page.getByRole('button', { name: /Suite/ }).click()
+  await expect(page).toHaveURL(/#\/straight-light$/)
+  // Otherwise the keyboard lands back on <body> and has to cross thirteen
+  // controls to reach the content again.
+  await expect(page.locator('#scene')).toBeFocused()
+})
+
+// A laptop at 200 % browser zoom is 640×400 CSS pixels, and a phone held
+// sideways is not much taller. Both were outside the two viewports this suite
+// ran, and both used to lose the Next button behind `overflow-hidden`.
+for (const { name, width, height } of [
+  { name: '200 % zoom', width: 640, height: 400 },
+  { name: 'phone landscape', width: 844, height: 390 },
+]) {
+  test(`the story stays finishable at ${name}`, async ({ page }) => {
+    await page.setViewportSize({ width, height })
+    await page.goto('/#/hole-size')
+
+    const next = page.getByRole('button', { name: /Suite/ })
+    await next.scrollIntoViewIfNeeded()
+    await expect(next).toBeInViewport()
+    await next.click()
+    await expect(page).toHaveURL(/#\/box-length$/)
+  })
+}
 
 test('an unknown chapter falls back to the beginning instead of a blank screen', async ({
   page,
@@ -85,9 +121,9 @@ test('the whole app switches language', async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('lang', 'fr')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(/trou/i)
 
-  // The toggle is labelled with what it does, not with what it currently is,
-  // so the accessible name is the French sentence while the app is French.
-  await page.getByRole('button', { name: /anglais/i }).click()
+  // Located by the word a child (or a voice-control user) actually sees —
+  // which is the whole point of dropping the mismatched aria-label.
+  await page.getByRole('button', { name: 'English' }).click()
 
   await expect(page.locator('html')).toHaveAttribute('lang', 'en')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(/hole/i)
