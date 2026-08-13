@@ -14,17 +14,9 @@ interface ChapterShellProps {
   children: ReactNode
   /** Sliders and toggles, kept out of the scene so the picture stays a picture. */
   controls?: ReactNode
-  /** Overrides the "Next" label on the last chapter. */
-  nextLabelKey?: 'nav.next' | 'nav.finish'
 }
 
-export function ChapterShell({
-  slug,
-  narration,
-  children,
-  controls,
-  nextLabelKey = 'nav.next',
-}: ChapterShellProps) {
+export function ChapterShell({ slug, narration, children, controls }: ChapterShellProps) {
   const t = useT()
   const { markVisited, visited, soundEnabled, setSoundEnabled, locale, setLocale } = useSettings()
   const [, navigate] = useHashRoute(slug)
@@ -136,7 +128,7 @@ export function ChapterShell({
           data-variant="primary"
           onClick={() => navigate(next ? next.slug : chapterOrder[0].slug)}
         >
-          {t(next ? nextLabelKey : 'nav.finish')}
+          {t(next ? 'nav.next' : 'nav.finish')}
           <span aria-hidden="true">→</span>
         </button>
       </nav>
