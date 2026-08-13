@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { BackWall, Box, CentreRay, Scene, SceneLabel } from '../engine/RayDiagram'
+import { BackWall, Box, CentreRay, Scene, SceneLabel, WALL_THICKNESS } from '../engine/RayDiagram'
 import { createGeometry } from '../engine/geometry'
 import { useT } from '../i18n/useT'
 import { BigSlider } from '../shell/BigSlider'
@@ -25,7 +25,9 @@ import { ChapterShell } from '../shell/ChapterShell'
  * would be the kind of convenient lie this app does not tell. The band IS
  * drawn, lit and dark exactly where the geometry says, and the panel on the
  * right is the same paper seen face on, magnified. Both read their numbers
- * from `geometry`, so they cannot disagree.
+ * from `geometry`, and the callout that ties them together lands on the edges
+ * of the picture in each view — so the magnification it claims is the
+ * magnification the panel actually draws.
  */
 
 const OBJECT_DISTANCE = 300
@@ -44,8 +46,10 @@ const PANEL_FILL = 0.34
 
 /** Along the box, as fractions of its length: three strips of tape per seam. */
 const TAPE_AT = [0.16, 0.5, 0.84]
-/** The strip that comes off when the child makes a leak. */
-const LEAK_AT = 0.5
+/** Which of them comes off when the child makes a leak — by position, not by
+ *  value: comparing the fractions works only while one of them stays exactly
+ *  0.5, and the day it does not the tape stays on over an open seam. */
+const LEAK_INDEX = 1
 
 export function YourBoxChapter() {
   const t = useT()
@@ -76,26 +80,33 @@ export function YourBoxChapter() {
   const moonImageRadius = geometry.imageHeight(moonRadius)
   const moonImageCentre = geometry.landing(moonCentreY, 0)
 
+  // `toSvg` is the only thing allowed to flip y, so nothing below subtracts
+  // from `axisY` by hand: an object-side height and a screen coordinate look
+  // alike and mixing them silently is how a diagram starts lying.
+  const onWall = (sceneY: number) => geometry.toSvg({ x: BOX_LENGTH, y: sceneY }).y
   const sun = geometry.toSvg({ x: -OBJECT_DISTANCE, y: 0 })
+  const moon = geometry.toSvg({ x: -OBJECT_DISTANCE, y: moonCentreY })
   const top = axisY - BOX_HALF_HEIGHT
   const bottom = axisY + BOX_HALF_HEIGHT
   const boxLengthPx = wallX - holeX
   const tapeX = (fraction: number) => holeX + boxLengthPx * fraction
-  const gapX = tapeX(LEAK_AT)
+  const gapX = tapeX(TAPE_AT[LEAK_INDEX] ?? 0.5)
 
   // The lit strip on the paper, seen edge on, and the part of it the Moon has
   // taken away. Both are read straight off the projected disc, and the dark
   // part is clipped to the lit one: the Moon's shadow beyond the edge of the
   // picture falls on wall that was never lit, so drawing it there would put a
   // dull rectangle on the paper for no physical reason.
-  const litTop = axisY - imageRadius
-  const litBottom = axisY + imageRadius
-  const shadowTop = Math.max(litTop, axisY - (moonImageCentre + moonImageRadius))
-  const shadowBottom = Math.min(litBottom, axisY - (moonImageCentre - moonImageRadius))
+  const litTop = onWall(imageRadius)
+  const litBottom = onWall(-imageRadius)
+  const shadowTop = Math.max(litTop, onWall(moonImageCentre + moonImageRadius))
+  const shadowBottom = Math.min(litBottom, onWall(moonImageCentre - moonImageRadius))
   const shadowHeight = Math.max(0, shadowBottom - shadowTop)
 
   // The same picture, face on and magnified — the only view in which a
-  // crescent is a crescent.
+  // crescent is a crescent. The scale is a drawing choice, not an optical
+  // quantity; what is not a choice is that the callout below has to land on
+  // the edges this scale produces.
   const panelScale = (PANEL.size * PANEL_FILL) / imageRadius
   const panelCx = PANEL.x + PANEL.size / 2
   const panelCy = PANEL.y + PANEL.size / 2
@@ -154,8 +165,8 @@ export function YourBoxChapter() {
         <circle cx={sun.x} cy={sun.y} r={SUN_RADIUS * 1.9} fill="url(#your-box-halo)" />
         <circle cx={sun.x} cy={sun.y} r={SUN_RADIUS} fill="var(--color-ray)" />
         <circle
-          cx={sun.x}
-          cy={sun.y - moonCentreY}
+          cx={moon.x}
+          cy={moon.y}
           r={moonRadius}
           fill="var(--color-night)"
           stroke="var(--color-edge)"
@@ -188,12 +199,18 @@ export function YourBoxChapter() {
             <rect
               x={wallX}
               y={litTop}
-              width={16}
+              width={WALL_THICKNESS}
               height={imageRadius * 2}
               fill="var(--color-ray)"
               opacity={0.95}
             />
-            <rect x={wallX} y={shadowTop} width={16} height={shadowHeight} fill="var(--color-wall)" />
+            <rect
+              x={wallX}
+              y={shadowTop}
+              width={WALL_THICKNESS}
+              height={shadowHeight}
+              fill="var(--color-wall)"
+            />
           </g>
 
           {/* A seam has come open: light walks in, floods the chamber and the
@@ -229,9 +246,9 @@ export function YourBoxChapter() {
         </g>
 
         {/* The tape, strip by strip — and the one that came off. */}
-        {TAPE_AT.map((fraction) => (
+        {TAPE_AT.map((fraction, index) => (
           <g key={fraction} fill="var(--color-muted)" opacity={0.75}>
-            {leaking && fraction === LEAK_AT ? null : (
+            {leaking && index === LEAK_INDEX ? null : (
               <rect x={tapeX(fraction) - 16} y={top - 11} width={32} height={14} rx={4} />
             )}
             <rect x={tapeX(fraction) - 16} y={bottom - 3} width={32} height={14} rx={4} />
@@ -249,8 +266,15 @@ export function YourBoxChapter() {
           opacity={0.7}
           fill="none"
         >
-          <path d={`M ${wallX + 16} ${litTop} L ${PANEL.x} ${PANEL.y}`} />
-          <path d={`M ${wallX + 16} ${litBottom} L ${PANEL.x} ${PANEL.y + PANEL.size}`} />
+          {/* On the edges of the picture at both ends, not on the corners of
+              the panel: the corners would claim the panel is the picture, and
+              draw a magnification the panel does not use. */}
+          <path
+            d={`M ${wallX + WALL_THICKNESS} ${litTop} L ${PANEL.x} ${panelCy - imageRadius * panelScale}`}
+          />
+          <path
+            d={`M ${wallX + WALL_THICKNESS} ${litBottom} L ${PANEL.x} ${panelCy + imageRadius * panelScale}`}
+          />
         </g>
         <rect
           x={PANEL.x}
@@ -293,8 +317,11 @@ export function YourBoxChapter() {
         </g>
 
         {/* ── What each part is for ───────────────────────────────────────── */}
-        <SceneLabel x={holeX} y={top - 22} anchor="start">
-          {t('chapter.your-box.tape')}
+        {/* The seam label follows the seam. Left on "taped shut" while the
+            chamber is flooding, it would contradict both the picture and the
+            line being read aloud. */}
+        <SceneLabel x={holeX} y={top - 22} anchor="start" tone={leaking ? 'ray' : 'muted'}>
+          {t(leaking ? 'chapter.your-box.tapeOpen' : 'chapter.your-box.tape')}
         </SceneLabel>
         <SceneLabel x={panelCx} y={PANEL.y + PANEL.size + 30} tone="ink">
           {t('chapter.your-box.screen')}

@@ -103,6 +103,13 @@ export function Box({
   )
 }
 
+/**
+ * How thick the back wall is drawn. Exported because a chapter that paints the
+ * picture *on* the wall has to cover exactly it — recopying the number leaves
+ * the paint hanging in the air the day this changes, and no test would see it.
+ */
+export const WALL_THICKNESS = 16
+
 /** The back wall, where the image lands. `glow` is 0–1. */
 export function BackWall({
   geometry,
@@ -118,7 +125,7 @@ export function BackWall({
     <rect
       x={wallX}
       y={axisY - halfHeight}
-      width={16}
+      width={WALL_THICKNESS}
       height={halfHeight * 2}
       className="fill-wall"
       style={{ filter: `brightness(${1 + glow * 2})` }}

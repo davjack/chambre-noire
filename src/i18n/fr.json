@@ -91,7 +91,8 @@
   "chapter.your-box.screen": "le calque : ton mur",
   "chapter.your-box.length": "plus longue, image plus grande",
   "chapter.your-box.tape": "bien scotchée : il fait tout noir",
-  "chapter.your-box.safety": "Regarde l'image dans la boîte, jamais le Soleil.",
+  "chapter.your-box.tapeOpen": "le scotch a sauté : ça fuit",
+  "chapter.your-box.safety": "Regarde l'image dans la boîte. Jamais le Soleil par le trou !",
 
   "chapter.build-it.title": "Fabrique la tienne",
   "chapter.build-it.say": "Il te faut une boîte, du papier et une aiguille.",

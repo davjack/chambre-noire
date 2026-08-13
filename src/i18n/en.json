@@ -91,7 +91,8 @@
   "chapter.your-box.screen": "the paper is your wall",
   "chapter.your-box.length": "longer box, bigger picture",
   "chapter.your-box.tape": "taped shut: pitch dark inside",
-  "chapter.your-box.safety": "Look at the picture in the box, never at the Sun.",
+  "chapter.your-box.tapeOpen": "the tape came off: it leaks",
+  "chapter.your-box.safety": "Look at the picture in the box. Never at the Sun through the hole!",
 
   "chapter.build-it.title": "Build your own",
   "chapter.build-it.say": "You need a box, some paper and a needle.",
