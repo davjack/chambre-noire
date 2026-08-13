@@ -29,6 +29,9 @@ export default defineConfig({
     },
     {
       name: 'tablet-portrait',
+      // The layout suite sets its own viewports for every case it covers, so
+      // running it again under this project's would only re-test the override.
+      testIgnore: /layout\.spec\.ts/,
       use: {
         browserName: 'chromium',
         viewport: { width: 820, height: 1180 },

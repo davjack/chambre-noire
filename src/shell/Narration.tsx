@@ -43,10 +43,25 @@ export function Narration({ narrationKey }: { narrationKey: TranslationKey }) {
     const audio = (audioRef.current ??= new Audio())
     audio.pause()
     audio.src = narrationUrl(locale, narrationKey)
-    // Rejects when the browser blocks audio before any user gesture. Sound is
-    // opt-in here, so that only happens on the very first line, and silence is
-    // the correct outcome then.
-    void audio.play().catch(() => {})
+    void audio.play().catch((error: DOMException) => {
+      /*
+       * Two very different failures arrive down this same path.
+       *
+       * `NotAllowedError` is autoplay policy: the browser wants a gesture
+       * first. It happens on any reload with the sound already remembered —
+       * the setting is persisted — and the next tap fixes it. Silence is the
+       * correct outcome and nobody needs telling.
+       *
+       * Anything else means the clip did not load: a deployment that forgot
+       * `public/audio`, or a host serving mp3 as text/html. That produces a
+       * mute app with no symptom at all, which is the state this narration was
+       * built to end. The child still sees nothing; the adult who deployed it
+       * sees the console.
+       */
+      if (error.name !== 'NotAllowedError') {
+        console.warn('narration clip failed to play', audio.src, error)
+      }
+    })
   }, [locale, narrationKey])
 
   useEffect(() => {
@@ -69,7 +84,7 @@ export function Narration({ narrationKey }: { narrationKey: TranslationKey }) {
         <button
           type="button"
           onClick={play}
-          className="grid size-16 shrink-0 place-items-center rounded-full border-2 border-edge bg-chamber text-ray transition-colors hover:border-ray"
+          className="grid size-16 shrink-0 place-items-center rounded-full border-2 border-edge bg-chamber text-ray transition-colors hover:border-ray [@media(max-height:430px)]:size-12"
           aria-label={t('sound.replay')}
         >
           <SpeakerIcon />

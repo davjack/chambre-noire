@@ -32,17 +32,29 @@ export function ChapterShell({ slug, narrationKey, children, controls }: Chapter
 
   return (
     /*
-     * The scene, the sentence being spoken and the Next button should all be
-     * visible at once, so the scene shrinks to whatever the others leave.
+     * An app shell: a header, a scrolling middle, and a footer that is always
+     * there. Three earlier attempts each failed a real case.
      *
-     * But it shrinks only down to a floor, and the page is allowed to grow past
-     * the viewport below that. Pinning the height and clipping the overflow —
-     * the first version of this — put the Next button off-screen and out of
-     * reach of the keyboard at 200 % browser zoom, which is a failure of WCAG
-     * 1.4.4 and 1.4.10, not a cosmetic one. A page that scrolls is worse than a
-     * page that fits, and far better than a page you cannot finish.
+     * Letting the page grow to a viewport-height minimum put "Suite" below the
+     * fold on all ten chapters in landscape and at 200 % zoom — a child who
+     * cannot see the way forward does not go looking for it. Pinning the
+     * height and clipping the overflow put it out of reach entirely, failing
+     * WCAG 1.4.4 and 1.4.10. Sticking the footer to the bottom kept it visible
+     * but let the narration — the one line that matters most — scroll
+     * underneath it.
+     *
+     * (Class names are spelled out nowhere in this comment on purpose:
+     * Tailwind scans comments too, and naming a utility here emits its rule
+     * into the bundle.)
+     *
+     * Here nothing overlaps and nothing is clipped: only the middle scrolls,
+     * and it can shrink to nothing, so the fixed furniture always fits.
+     *
+     * The height unit is the *small* viewport, the one visible while the
+     * browser's own chrome shows. The dynamic unit sizes to the layout
+     * viewport, which on a phone is taller than the visible area.
      */
-    <div className="flex min-h-dvh flex-col gap-2 pb-[env(safe-area-inset-bottom)]">
+    <div className="flex h-svh flex-col pb-[env(safe-area-inset-bottom)]">
       <a
         href="#scene"
         className="sr-only focus:not-sr-only focus:absolute focus:left-3 focus:top-3 focus:z-50 focus:rounded-full focus:bg-ray focus:px-5 focus:py-3 focus:font-bold focus:text-night"
@@ -61,7 +73,7 @@ export function ChapterShell({ slug, narrationKey, children, controls }: Chapter
               toggle button, pressed", which states the opposite of the truth. */}
           <button
             type="button"
-            className="pill !min-h-11 !px-4 text-sm"
+            className="pill !min-h-11 !px-4 text-sm [@media(max-height:430px)]:!min-h-9"
             onClick={() => setSoundEnabled(!soundEnabled)}
           >
             {soundEnabled ? t('sound.disable') : t('sound.enable')}
@@ -71,7 +83,7 @@ export function ChapterShell({ slug, narrationKey, children, controls }: Chapter
               — WCAG 2.5.3 Label in Name. The visible word is the better name. */}
           <button
             type="button"
-            className="pill !min-h-11 !px-4 text-sm"
+            className="pill !min-h-11 !px-4 text-sm [@media(max-height:430px)]:!min-h-9"
             onClick={() => setLocale(locale === 'fr' ? 'en' : 'fr')}
           >
             {t('lang.switch')}
@@ -93,7 +105,7 @@ export function ChapterShell({ slug, narrationKey, children, controls }: Chapter
                     number: position + 1,
                     title: t(chapter.titleKey),
                   })}
-                  className="group grid h-11 w-full place-items-center"
+                  className="group grid h-11 w-full place-items-center [@media(max-height:430px)]:h-7"
                 >
                   <span
                     className={`block h-1.5 w-full rounded-full transition-colors ${
@@ -111,21 +123,43 @@ export function ChapterShell({ slug, narrationKey, children, controls }: Chapter
         </ol>
       </nav>
 
-      <h1 className="text-balance px-4 text-center text-2xl font-extrabold sm:text-3xl">
-        {t(chapterOrder[index]?.titleKey ?? 'app.title')}
-      </h1>
+      {/* The only part that scrolls, and only when it has to. */}
+      <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto py-1">
+        <h1 className="text-balance px-4 text-center text-2xl font-extrabold sm:text-3xl">
+          {t(chapterOrder[index]?.titleKey ?? 'app.title')}
+        </h1>
 
-      <main id="scene" tabIndex={-1} className="relative min-h-[30vh] flex-1 px-3">
-        {/* Absolute so the children get a definite height to size against —
-            `h-full` inside a plain flex item would have nothing to resolve. */}
-        <div className="absolute inset-0 flex items-center justify-center">{children}</div>
-      </main>
+        {/* 8 rem is the smallest scene worth looking at — but not at any cost:
+            at 300 px tall it is room the window does not have, and the column
+            overflowed. `min(8rem, 20svh)` keeps the floor everywhere it fits
+            and yields where it does not. */}
+        <main id="scene" tabIndex={-1} className="relative min-h-[min(8rem,20svh)] flex-1 px-3">
+          {/* Absolute so the children get a definite height to size against —
+              `h-full` inside a plain flex item would have nothing to resolve. */}
+          <div className="absolute inset-0 flex items-center justify-center">{children}</div>
+        </main>
 
-      {controls ? <div className="mx-auto w-full max-w-2xl px-4">{controls}</div> : null}
+        {controls ? <div className="mx-auto w-full max-w-2xl px-4">{controls}</div> : null}
+      </div>
 
-      <Narration narrationKey={narrationKey} />
+      {/*
+       * Outside the scroller, with the navigation.
+       *
+       * When room runs short something has to give, and the order is not
+       * negotiable: the way forward, then the sentence being taught, then the
+       * controls, then the picture. Leaving the narration inside the scrolling
+       * middle put the one line that carries the lesson below the fold on every
+       * chapter in landscape and at 200 % zoom — measured, not assumed.
+       */}
+      {/* The border belongs here, not on the navigation: narration and buttons
+          are one fixed panel, and a visible edge is what tells a reader that
+          content disappearing above it has scrolled under something rather
+          than broken. */}
+      <div className="shrink-0 border-t border-edge/60 pb-1 pt-2">
+        <Narration narrationKey={narrationKey} />
+      </div>
 
-      <nav className="flex items-center justify-between gap-3 px-4 pb-4">
+      <nav className="flex shrink-0 items-center justify-between gap-3 px-4 pb-4 pt-2">
         <button
           type="button"
           className="pill"

@@ -118,25 +118,6 @@ test('navigating moves focus into the new chapter', async ({ page }) => {
   await expect(page.locator('#scene')).toBeFocused()
 })
 
-// A laptop at 200 % browser zoom is 640×400 CSS pixels, and a phone held
-// sideways is not much taller. Both were outside the two viewports this suite
-// ran, and both used to lose the Next button behind `overflow-hidden`.
-for (const { name, width, height } of [
-  { name: '200 % zoom', width: 640, height: 400 },
-  { name: 'phone landscape', width: 844, height: 390 },
-]) {
-  test(`the story stays finishable at ${name}`, async ({ page }) => {
-    await page.setViewportSize({ width, height })
-    await page.goto('/#/hole-size')
-
-    const next = page.getByRole('button', { name: /Suite/ })
-    await next.scrollIntoViewIfNeeded()
-    await expect(next).toBeInViewport()
-    await next.click()
-    await expect(page).toHaveURL(/#\/box-length$/)
-  })
-}
-
 test('an unknown chapter falls back to the beginning instead of a blank screen', async ({
   page,
 }) => {

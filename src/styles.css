@@ -198,6 +198,21 @@
     opacity: 0.35;
     cursor: not-allowed;
   }
+
+  /*
+   * Short viewports — a phone held sideways, a laptop at 400 % zoom — cannot
+   * afford full-size furniture: measured at 320×300, the header, the progress
+   * bar, the narration and the navigation came to 305 px of the 300 available.
+   * Everything essential stayed visible, but the document scrolled to fit.
+   * Trimming the two tallest pieces removes the overflow without touching the
+   * 24 px minimum target size WCAG asks for.
+   */
+  @media (max-height: 430px) {
+    .pill {
+      min-height: 3rem;
+      padding-inline: 1.1rem;
+    }
+  }
 }
 
 /*
