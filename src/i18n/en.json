@@ -1,5 +1,5 @@
 {
-  "app.title": "The Little Hole",
+  "app.title": "Camera Obscura",
   "app.skipToScene": "Skip to the experiment",
 
   "nav.next": "Next",
@@ -43,7 +43,7 @@
   "chapter.no-hole.say.narrow": "The smaller the window, the better you can see.",
   "chapter.no-hole.window": "Window size",
 
-  "chapter.the-hole.title": "The little hole sorts the light",
+  "chapter.the-hole.title": "The tiny hole sorts the light",
   "chapter.the-hole.say": "Close the window down to a tiny hole.",
   "chapter.the-hole.say.sorted": "Every point found its own place on the wall.",
   "chapter.the-hole.window": "Hole size",

@@ -72,7 +72,7 @@ test('progress survives a reload', async ({ page }) => {
   // version of this test would have passed with `writeStored` completely
   // broken.
   const visited = () =>
-    page.evaluate(() => JSON.parse(localStorage.getItem('petit-trou:visited') ?? '[]') as string[])
+    page.evaluate(() => JSON.parse(localStorage.getItem('chambre-noire:visited') ?? '[]') as string[])
   expect(await visited()).toContain('the-hole')
 
   await page.reload()

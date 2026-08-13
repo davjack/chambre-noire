@@ -1,4 +1,4 @@
-const PREFIX = 'petit-trou:'
+const PREFIX = 'chambre-noire:'
 
 /**
  * localStorage, treated as a nice-to-have.

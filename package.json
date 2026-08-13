@@ -1,9 +1,9 @@
 {
-  "name": "le-petit-trou",
+  "name": "chambre-noire",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Le Petit Trou — the camera obscura explained to children from age 6, one manipulable idea at a time.",
+  "description": "La Chambre Noire — the camera obscura explained to children from age 6, one manipulable idea at a time.",
   "license": "MIT",
   "engines": {
     "node": "^20.19.0 || >=22.12.0"

@@ -71,7 +71,7 @@ describe('readStored / writeStored', () => {
     const storage = memoryStorage()
     useStorage(storage)
     writeStored('locale', 'fr')
-    expect(storage.getItem('petit-trou:locale')).toBe('fr')
+    expect(storage.getItem('chambre-noire:locale')).toBe('fr')
     expect(storage.getItem('locale')).toBeNull()
   })
 

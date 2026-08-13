@@ -1,5 +1,5 @@
 {
-  "app.title": "Le Petit Trou",
+  "app.title": "La Chambre Noire",
   "app.skipToScene": "Aller à l'expérience",
 
   "nav.next": "Suite",
@@ -43,7 +43,7 @@
   "chapter.no-hole.say.narrow": "Plus la fenêtre est petite, mieux on voit.",
   "chapter.no-hole.window": "Taille de la fenêtre",
 
-  "chapter.the-hole.title": "Le petit trou range la lumière",
+  "chapter.the-hole.title": "Un trou minuscule range la lumière",
   "chapter.the-hole.say": "Ferme la fenêtre jusqu'au petit trou.",
   "chapter.the-hole.say.sorted": "Chaque point a trouvé sa place sur le mur.",
   "chapter.the-hole.window": "Taille du trou",

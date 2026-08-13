@@ -1,4 +1,4 @@
-# Le Petit Trou
+# La Chambre Noire
 
 **How a tiny hole makes a picture — explained to children from age 6.**
 
@@ -16,7 +16,7 @@ whatever is written can be spoken aloud.
 | 0 | Regarde bien | Touches the black wall | The world walks in, upside down |
 | 1 | La lumière va tout droit | Moves a lamp, blocks it with a hand | Rays are straight; shadows follow |
 | 2 | Sans trou, pas d'image | Opens the window wide | Every point lights the whole wall: no picture |
-| 3 | Le petit trou range la lumière | Closes it to a pinhole | Each point finds its own place |
+| 3 | Un trou minuscule range la lumière | Closes it to a pinhole | Each point finds its own place |
 | 4 | Pourquoi c'est à l'envers | Lifts the figure, in two views | Rays cross at the hole — both axes flip |
 | 5 | Grand trou ou petit trou ? | Slides the aperture | Sharp or bright: pick one |
 | 6 | Boîte courte ou longue | Slides the box length | Bigger picture, dimmer picture |
