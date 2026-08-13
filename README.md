@@ -115,8 +115,9 @@ without a rebuild. No environment variables, no backend, nothing to configure.
   `npm run verify`.
 - **Zero WCAG 2.2 AA violations** on every chapter, checked by axe in CI-able
   tests, not asserted in prose.
-- **Works without a voice**: `speechSynthesis` is an enhancement; the text is
-  always on screen.
+- **Same narration on every device**: 44 recorded clips ship with the app, so
+  nothing depends on the voices a browser happens to offer. The text is on
+  screen regardless.
 - **Works without WebGL2**: chapters 0 and 5 fall back to an interactive canvas
   renderer driven by the same `optics.ts` numbers, and say so on screen.
 - **Respects `prefers-reduced-motion`**: every scene is readable from its static
