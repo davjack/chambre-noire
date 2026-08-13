@@ -53,10 +53,12 @@ TypeScript 6 and switch back.
   never hard-code a coordinate that `optics.ts` could produce.
 - **`src/engine/geometry.ts` is the only place scene coordinates are computed.**
   It flips y and shifts the origin; nothing else may.
-- **No user-facing string outside `src/i18n/*.json`.** French is the reference
-  dictionary and the `TranslationKey` type is derived from it, so a missing
-  English key fails the build. A unit test also fails on any key the app no
-  longer renders.
+- **No user-facing string outside `src/i18n/*.json`** — with one exception:
+  `index.html` carries the document title, the meta description and a
+  `<noscript>` line, which exist before any JavaScript runs and so cannot come
+  from the dictionary. Everywhere else, French is the reference dictionary and
+  the `TranslationKey` type is derived from it, so a missing English key fails
+  the build. A unit test also fails on any key the app no longer renders.
 - **Whatever is spoken is also on screen.** Narration is an enhancement over
   text, never a replacement.
 - **The narration is a shipped recording, not `speechSynthesis`.** Browser

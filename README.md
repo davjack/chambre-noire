@@ -67,7 +67,7 @@ perfect while chapters 0 and 5 were black for the whole dev session.
 ## The narration
 
 Every sentence is on screen in large type, and every one of them is also a
-recorded clip that ships with the app — 44 files, 1.3 MB, one per narrated line
+recorded clip that ships with the app — 44 files, 1.2 MB, one per narrated line
 per language.
 
 **Not `speechSynthesis`.** The browser's own voices proved to be a lottery the
@@ -111,7 +111,7 @@ without a rebuild. No environment variables, no backend, nothing to configure.
 
 ## Constraints it holds itself to
 
-- **72 KB of JavaScript**, gzipped — budget of 200 KB, enforced by
+- **73.6 KB of JavaScript**, gzipped — budget of 200 KB, enforced by
   `npm run verify`.
 - **Zero WCAG 2.2 AA violations** on every chapter, checked by axe in CI-able
   tests, not asserted in prose.

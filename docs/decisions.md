@@ -10,9 +10,9 @@ rejected option would win, so a future change has something to argue against.
 
 ## Rendering: 2D everywhere, a shader in one place
 
-Chapters draw with SVG, computed from `src/physics/optics.ts`. One chapter —
-*Grand trou ou petit trou ?* — runs a WebGL2 fragment shader that integrates the
-scene over the aperture disc.
+Chapters draw with SVG, computed from `src/physics/optics.ts`. Two of them —
+the opening screen and *Grand trou ou petit trou ?* — run a WebGL2 fragment
+shader that integrates the scene over the aperture disc.
 
 **Rejected: full 3D with three.js / React Three Fiber.** Free 3D navigation
 costs a six-year-old more attention than it returns, the core idea (rays
@@ -27,9 +27,10 @@ chapter. A CSS blur would have taught the opposite. *Would win* if the chapter
 were dropped.
 
 **Open objection:** a pinhole app for six-year-olds does not obviously need a
-GPU at all. It is the only GPU dependency, and it falls back to an interactive
-2D canvas driven by the same numbers. If measurement on a target tablet showed
-the shader below 30 fps, the fallback should become the primary path.
+GPU at all — and this one puts that dependency on its opening screen, where a
+failure costs the most. Both chapters fall back to an interactive 2D canvas
+driven by the same numbers. If measurement on a target tablet showed the shader
+below 30 fps, the fallback should become the primary path.
 
 ## Deliberately absent dependencies
 
@@ -68,7 +69,7 @@ correctly installed:
 | Chromium-based | **0** |
 
 A school tablet, an iPad and a parent's phone would each have produced something
-different again. The app now ships 44 clips (1.3 MB) generated offline with
+different again. The app now ships 44 clips (1.2 MB) generated offline with
 [Piper](https://github.com/rhasspy/piper), so the narration is identical
 everywhere, works offline, and the voice was chosen by listening to candidates
 rather than by accepting a default.
@@ -95,8 +96,11 @@ asserts it across eight viewports, and scrolls nothing before asserting —
 because the test it replaced called `scrollIntoViewIfNeeded()` first, and so
 proved reachability rather than visibility while the defect was live.
 
-The height unit is `svh`, not `dvh`: the dynamic unit sizes to the layout
-viewport, which on a phone is taller than the visible area.
+The shell is sized in `svh` — the *small* viewport, the one visible while the
+browser's own chrome is showing. `dvh` tracks the visible area as that chrome
+retracts, so a shell sized in it would resize mid-scroll and reflow the layout
+under the reader. `body` keeps a `100dvh` minimum on purpose, for the opposite
+reason: the background should still cover the screen once the chrome is gone.
 
 ## Visual language: geometric, not illustrated
 
@@ -122,6 +126,12 @@ Not defects — work that was scoped out and would be worth doing:
 - A live camera mode: `getUserMedia` fed through the same pinhole shader.
   Explicit opt-in, local only, no recording.
 - An offline PWA, for classrooms with poor wifi.
-- Open Graph image and social metadata.
+- An Open Graph image. The metadata itself is already in `index.html`; without
+  an image the Twitter card is declared `summary` rather than
+  `summary_large_image`, which would otherwise render an empty banner.
 - The audio clip filenames are not content-hashed, so a regenerated clip keeps
-  its name. Caching is deliberately short for `/audio/` as a result.
+  its name and any cache will serve the old one until it expires. Nothing in
+  this repository sets cache headers — the build is plain static files — so the
+  behaviour is entirely the host's. Content-hashing the names would settle it;
+  `src/shell/narrationAudio.ts` and `scripts/generate-narration.py` are the two
+  ends that would have to agree.

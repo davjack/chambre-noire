@@ -24,7 +24,9 @@
       property="og:description"
       content="Comment un tout petit trou fabrique une image à l'envers. À manipuler, dès 6 ans."
     />
-    <meta name="twitter:card" content="summary_large_image" />
+    <!-- `summary`, not `summary_large_image`: there is no og:image yet, and the
+     large variant renders an empty banner without one. -->
+    <meta name="twitter:card" content="summary" />
   </head>
   <body>
     <div id="root"></div>
