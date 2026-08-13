@@ -26,7 +26,7 @@ export function WowChapter() {
   return (
     <ChapterShell
       slug="wow"
-      narration={t(open ? 'chapter.wow.say.open' : 'chapter.wow.say.closed')}
+      narrationKey={open ? 'chapter.wow.say.open' : 'chapter.wow.say.closed'}
       controls={
         <div className="flex flex-col gap-1">
           {open ? (

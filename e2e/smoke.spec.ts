@@ -81,6 +81,34 @@ test('progress survives a reload', async ({ page }) => {
   expect(await visited()).toContain('the-hole')
 })
 
+test('turning the sound on fetches and plays the clip for the line on screen', async ({ page }) => {
+  await page.goto('/#/the-hole')
+
+  // The clip is a real file shipped with the app, so this asserts the whole
+  // chain: key → URL → 200. It is the check that would have caught the
+  // narration silently pointing at a path the generator never wrote.
+  const [response] = await Promise.all([
+    page.waitForResponse((r) => /audio\/fr\/chapter-the-hole-say.*\.mp3$/.test(r.url())),
+    page.getByRole('button', { name: 'Écouter', exact: true }).click(),
+  ])
+
+  // 206, not 200: a media element asks for a byte range, which is itself proof
+  // the browser accepted the file as playable audio rather than a 404 page.
+  expect(response.ok()).toBe(true)
+
+  const whole = await page.request.get(response.url())
+  expect((await whole.body()).byteLength).toBeGreaterThan(4096)
+})
+
+test('the replay button works even with the sound left off', async ({ page }) => {
+  await page.goto('/#/wow')
+  const [response] = await Promise.all([
+    page.waitForResponse((r) => /audio\/fr\/chapter-wow-say.*\.mp3$/.test(r.url())),
+    page.getByRole('button', { name: 'Réécouter', exact: true }).click(),
+  ])
+  expect(response.ok()).toBe(true)
+})
+
 test('navigating moves focus into the new chapter', async ({ page }) => {
   await page.goto('/#/wow')
   await page.getByRole('button', { name: /Suite/ }).click()

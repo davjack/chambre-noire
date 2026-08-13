@@ -74,7 +74,7 @@ export function BuildItChapter() {
   const t = useT()
 
   return (
-    <ChapterShell slug="build-it" narration={t('chapter.build-it.say')}>
+    <ChapterShell slug="build-it" narrationKey="chapter.build-it.say">
       {/* A named region that the keyboard can reach. Both halves are needed: a
           region that scrolls but cannot be focused leaves a child who has no
           pointer stuck at step three — caught by the axe pass on the shorter

@@ -41,7 +41,7 @@ export function YourEyeChapter() {
   return (
     <ChapterShell
       slug="your-eye"
-      narration={t(light < 35 ? 'chapter.your-eye.say.dark' : 'chapter.your-eye.say')}
+      narrationKey={light < 35 ? 'chapter.your-eye.say.dark' : 'chapter.your-eye.say'}
       controls={
         <div className="flex flex-col gap-3">
           <BigSlider

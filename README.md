@@ -64,68 +64,44 @@ One of its three projects, `dev-strict-mode`, runs the canvas tests against
 there, and a WebGL bug once lived in exactly that gap: the production build was
 perfect while chapters 0 and 5 were black for the whole dev session.
 
-## Turning the narration on
+## The narration
 
-Every sentence is always on screen in large type, so nothing is ever lost
-without sound. But the app can also read itself aloud, which matters for
-six-year-olds who do not read fluently yet — and that depends entirely on
-whether the *browser* offers a voice.
+Every sentence is on screen in large type, and every one of them is also a
+recorded clip that ships with the app — 44 files, 1.3 MB, one per narrated line
+per language.
 
-The app checks rather than assumes: **where no voice exists, the sound button is
-simply not shown.** So if you see no `Écouter` button, the browser has no voice
-to give. Here is how to get one.
+**Not `speechSynthesis`.** The browser's own voices proved to be a lottery the
+audience loses. Measured on one Ubuntu desktop, in a single session, with
+`speech-dispatcher` and eSpeak correctly installed:
 
-### Linux
-
-The browser matters more than the machine. Measured on one Ubuntu install, same
-session, same system voices:
-
-| Browser | Voices exposed to the page |
+| Browser | Voices offered to the page |
 |---|---|
-| **Firefox** | 14 805, of which 315 French |
+| Firefox | 14 805 — every one an eSpeak variant, unintelligible in French to a six-year-old |
 | Brave / Chrome / Chromium | **0** |
 
-Chromium-based browsers do not reliably expose `speech-dispatcher` voices on
-Linux. **Use Firefox for the narration.**
+A school tablet, an iPad and a parent's phone would each have produced something
+different again. Shipping the audio makes the narration identical everywhere,
+offline included, and let the voice be chosen by listening to it rather than
+accepting whatever the device happened to ship.
+
+Voices: **fr_FR-tom-medium** and **en_GB-alan-medium**, both from
+[Piper](https://github.com/rhasspy/piper) — neural, permissively licensed, and
+generated offline.
+
+### Regenerating the clips
+
+Needed whenever a narrated line changes. A unit test fails if the dictionaries
+and the audio drift apart, so this is never something you can forget silently.
 
 ```bash
-# 1. Install a speech engine and the bridge browsers talk to
-sudo apt install speech-dispatcher speech-dispatcher-espeak-ng espeak-ng
-
-# 2. Check the system itself can speak
-spd-say -l fr "Bonjour, ceci est un test"
-
-# 3. Check the voices are actually there
-spd-say -L | head
+python3 -m venv .venv && .venv/bin/pip install piper-tts   # once
+.venv/bin/python scripts/generate-narration.py             # ~30 s
 ```
 
-If step 2 is silent, no browser will speak either — fix that first. In Firefox,
-`about:config` → `media.webspeech.synth.enabled` must be `true` (it is by
-default).
-
-For a better voice than eSpeak's robotic one, install a neural engine such as
-`speech-dispatcher-piper` (Debian 13 / Ubuntu 25.04 and later) or PicoTTS
-(`sudo apt install libttspico-utils`), then select it in
-`~/.config/speech-dispatcher/speechd.conf` with `DefaultModule`.
-
-### macOS
-
-Voices ship with the system and every browser exposes them. To add or improve a
-French one: **System Settings → Accessibility → Spoken Content → System Voice →
-Manage Voices**, then download a French (France) voice — the "Enhanced" and
-"Premium" variants are far better than the default.
-
-### Windows
-
-**Settings → Time & Language → Speech → Manage voices → Add voices**, and add
-French. Edge and Chrome then expose it. Windows also offers online neural voices
-through Edge, which sound markedly better.
-
-### Android and iOS
-
-Voices are installed by default and every browser exposes them. On Android,
-**Settings → Accessibility → Text-to-speech output** lets you install a better
-engine and pick the French language pack.
+Models download once into `.voices/` (60 MB each, gitignored). `ffmpeg` does the
+MP3 encode. To change voice, edit `VOICES` at the top of the script — the
+catalogue is at
+[rhasspy/piper-voices](https://huggingface.co/rhasspy/piper-voices).
 
 ## Deploying
 

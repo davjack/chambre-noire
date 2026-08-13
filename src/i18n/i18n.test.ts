@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest'
 
 import en from './en.json'
 import fr from './fr.json'
-import { bcp47, isLocale, locales, resolveLocale, translate } from './index'
+import { isLocale, locales, resolveLocale, translate } from './index'
 
 type Key = keyof typeof fr
 
@@ -111,8 +111,4 @@ describe('locale resolution', () => {
     expect(resolveLocale(undefined)).toBe('fr')
   })
 
-  it('maps to a speech-synthesis tag', () => {
-    expect(bcp47('fr')).toBe('fr-FR')
-    expect(bcp47('en')).toBe('en-GB')
-  })
 })

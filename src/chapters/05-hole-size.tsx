@@ -74,7 +74,7 @@ export function HoleSizeChapter() {
   return (
     <ChapterShell
       slug="hole-size"
-      narration={t(narration)}
+      narrationKey={narration}
       controls={
         <div className="flex flex-col gap-4">
           <BigSlider

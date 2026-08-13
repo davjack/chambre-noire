@@ -53,9 +53,9 @@ export function UpsideDownChapter() {
   return (
     <ChapterShell
       slug="upside-down"
-      narration={t(
-        Math.abs(lift) > 20 ? 'chapter.upside-down.say.crossed' : 'chapter.upside-down.say',
-      )}
+      narrationKey={
+        Math.abs(lift) > 20 ? 'chapter.upside-down.say.crossed' : 'chapter.upside-down.say'
+      }
       controls={
         <BigSlider
           label={t('chapter.upside-down.height')}

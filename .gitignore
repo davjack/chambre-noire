@@ -16,3 +16,6 @@ playwright/.auth/
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+# Piper voice models: 60 MB each, downloaded by scripts/generate-narration.py
+.voices/

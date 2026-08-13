@@ -43,7 +43,7 @@ export function TheHoleChapter() {
   return (
     <ChapterShell
       slug="the-hole"
-      narration={t(sorted ? 'chapter.the-hole.say.sorted' : 'chapter.the-hole.say')}
+      narrationKey={sorted ? 'chapter.the-hole.say.sorted' : 'chapter.the-hole.say'}
       controls={
         <div className="flex flex-col gap-3">
           <BigSlider

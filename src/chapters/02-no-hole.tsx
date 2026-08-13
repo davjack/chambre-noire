@@ -48,7 +48,7 @@ export function NoHoleChapter() {
   return (
     <ChapterShell
       slug="no-hole"
-      narration={t(narration)}
+      narrationKey={narration}
       controls={
         <BigSlider
           label={t('chapter.no-hole.window')}

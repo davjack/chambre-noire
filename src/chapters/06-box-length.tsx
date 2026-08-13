@@ -44,7 +44,7 @@ export function BoxLengthChapter() {
   return (
     <ChapterShell
       slug="box-length"
-      narration={t(boxLength > 260 ? 'chapter.box-length.say.long' : 'chapter.box-length.say')}
+      narrationKey={boxLength > 260 ? 'chapter.box-length.say.long' : 'chapter.box-length.say'}
       controls={
         <div className="flex flex-col gap-4">
           <BigSlider

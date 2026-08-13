@@ -38,7 +38,7 @@ export function StraightLightChapter() {
   return (
     <ChapterShell
       slug="straight-light"
-      narration={t(handIn ? 'chapter.straight-light.say.blocked' : 'chapter.straight-light.say')}
+      narrationKey={handIn ? 'chapter.straight-light.say.blocked' : 'chapter.straight-light.say'}
       controls={
         <div className="flex flex-col gap-3">
           <BigSlider

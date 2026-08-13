@@ -94,7 +94,7 @@ export function SunSpotsChapter() {
   return (
     <ChapterShell
       slug="sun-spots"
-      narration={t(phase > 0.1 ? 'chapter.sun-spots.say.eclipse' : 'chapter.sun-spots.say')}
+      narrationKey={phase > 0.1 ? 'chapter.sun-spots.say.eclipse' : 'chapter.sun-spots.say'}
       controls={
         <BigSlider
           label={t('chapter.sun-spots.eclipse')}

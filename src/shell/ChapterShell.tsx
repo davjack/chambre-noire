@@ -1,26 +1,26 @@
 import { useEffect, type ReactNode } from 'react'
 
 import { chapterIndex, chapterOrder } from '../chapters/order'
+import type { TranslationKey } from '../i18n'
 import { useT } from '../i18n/useT'
-import { Narration, useHasVoice } from './Narration'
+import { Narration } from './Narration'
 import { useSettings } from './SettingsContext'
 import { useHashRoute } from './useHashRoute'
 
 interface ChapterShellProps {
   slug: string
-  /** The one sentence being said right now. Chapters change it as the child plays. */
-  narration: string
+  /** The line being said right now — as a key, because the clip is keyed too. */
+  narrationKey: TranslationKey
   /** The scene: an SVG or a canvas, and nothing else. */
   children: ReactNode
   /** Sliders and toggles, kept out of the scene so the picture stays a picture. */
   controls?: ReactNode
 }
 
-export function ChapterShell({ slug, narration, children, controls }: ChapterShellProps) {
+export function ChapterShell({ slug, narrationKey, children, controls }: ChapterShellProps) {
   const t = useT()
   const { markVisited, visited, soundEnabled, setSoundEnabled, locale, setLocale } = useSettings()
   const [, navigate] = useHashRoute(slug)
-  const hasVoice = useHasVoice()
 
   const index = chapterIndex(slug)
   const previous = index > 0 ? chapterOrder[index - 1] : undefined
@@ -53,22 +53,19 @@ export function ChapterShell({ slug, narration, children, controls }: ChapterShe
       <header className="flex items-center justify-between gap-3 px-4 pt-3">
         <p className="text-sm font-bold uppercase tracking-wider text-muted">{t('app.title')}</p>
         <div className="flex items-center gap-2">
-          {/* Offered only where a voice exists. Chromium on Linux reports none
-              at all, and the button used to sit there inviting a six-year-old
-              to press it for nothing.
+          {/* Always offered now: the narration is a clip that ships with the
+              app, so there is no device where this button does nothing.
 
               No `aria-pressed`: the label already says what the next press
               does. Carrying both makes a screen reader announce "Sound off,
               toggle button, pressed", which states the opposite of the truth. */}
-          {hasVoice ? (
-            <button
-              type="button"
-              className="pill !min-h-11 !px-4 text-sm"
-              onClick={() => setSoundEnabled(!soundEnabled)}
-            >
-              {soundEnabled ? t('sound.disable') : t('sound.enable')}
-            </button>
-          ) : null}
+          <button
+            type="button"
+            className="pill !min-h-11 !px-4 text-sm"
+            onClick={() => setSoundEnabled(!soundEnabled)}
+          >
+            {soundEnabled ? t('sound.disable') : t('sound.enable')}
+          </button>
           {/* No `aria-label` either: it read "Passer en anglais" over a button
               labelled "English", so voice control could not act on what it saw
               — WCAG 2.5.3 Label in Name. The visible word is the better name. */}
@@ -126,7 +123,7 @@ export function ChapterShell({ slug, narration, children, controls }: ChapterShe
 
       {controls ? <div className="mx-auto w-full max-w-2xl px-4">{controls}</div> : null}
 
-      <Narration text={narration} />
+      <Narration narrationKey={narrationKey} />
 
       <nav className="flex items-center justify-between gap-3 px-4 pb-4">
         <button

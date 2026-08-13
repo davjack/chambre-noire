@@ -1,100 +1,30 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { bcp47 } from '../i18n'
+import type { TranslationKey } from '../i18n'
 import { useT } from '../i18n/useT'
+import { narrationUrl } from './narrationAudio'
 import { useSettings } from './SettingsContext'
 
 /**
  * Narration, and the promise that goes with it: the spoken line is *always*
  * also on screen, in large type, inside a live region.
  *
- * Six-year-olds are the target audience and many of them barely read, so the
- * voice matters. But voices are the least reliable thing on the web platform —
- * absent in kiosk browsers, unusable in some Android French packs, silenced by
- * a school mute switch. Text is the channel that never fails; speech is the
- * enhancement on top. Everything below is written in that order.
+ * The voice is a recorded clip, not `speechSynthesis`. That was not a
+ * preference — the browser's own voices proved to be a lottery the audience
+ * loses. Measured on one Ubuntu desktop, in a single session: Firefox offered
+ * 14 805 voices, every one of them an eSpeak variant whose French a
+ * six-year-old cannot follow, and Brave offered none at all. A school tablet
+ * and a parent's phone would each have produced something different again.
  *
- * Swapping `speechSynthesis` for recorded audio later means rewriting `speak`
- * and nothing else.
+ * Shipping the audio makes the narration identical everywhere, offline
+ * included, and let the voice be chosen by listening to it.
  */
 
-function pickVoice(languageTag: string): SpeechSynthesisVoice | undefined {
-  const voices = globalThis.speechSynthesis?.getVoices() ?? []
-  const primary = languageTag.slice(0, 2)
-  return (
-    voices.find((voice) => voice.lang.replace('_', '-') === languageTag) ??
-    voices.find((voice) => voice.lang.slice(0, 2) === primary)
-  )
-}
-
-/**
- * Whether this browser can actually speak, right now.
- *
- * Not a formality: on Linux, Firefox exposes the system voices through
- * speech-dispatcher while Chromium-based browsers commonly expose none at all,
- * on the very same machine. Every control that promises sound is gated on this,
- * because a button that does nothing is worse than a button that is not there.
- */
-export function useHasVoice(): boolean {
-  const [voiceCount, setVoiceCount] = useState(
-    () => globalThis.speechSynthesis?.getVoices().length ?? 0,
-  )
-
-  // Chrome populates the voice list asynchronously, and it can arrive after
-  // the first render — so the button state has to follow it.
-  useEffect(() => {
-    const synth = globalThis.speechSynthesis
-    if (!synth) return
-    const update = () => setVoiceCount(synth.getVoices().length)
-    update()
-    synth.addEventListener('voiceschanged', update)
-    return () => synth.removeEventListener('voiceschanged', update)
-  }, [])
-
-  return voiceCount > 0
-}
-
-interface Speech {
-  speak: (text: string) => void
-  cancel: () => void
-  /** A voice is installed and usable right now. */
-  hasVoice: boolean
-}
-
-export function useSpeech(): Speech {
-  const { locale } = useSettings()
-  const hasVoice = useHasVoice()
-
-  const cancel = useCallback(() => {
-    globalThis.speechSynthesis?.cancel()
-  }, [])
-
-  const speak = useCallback(
-    (text: string) => {
-      const synth = globalThis.speechSynthesis
-      if (!synth || !text) return
-      // Never queue: the previous sentence is always stale by now.
-      synth.cancel()
-      const utterance = new SpeechSynthesisUtterance(text)
-      const languageTag = bcp47(locale)
-      utterance.lang = languageTag
-      const voice = pickVoice(languageTag)
-      if (voice) utterance.voice = voice
-      // Slightly slow and slightly bright: read to a child, not to a commuter.
-      utterance.rate = 0.92
-      utterance.pitch = 1.05
-      synth.speak(utterance)
-    },
-    [locale],
-  )
-
-  return { speak, cancel, hasVoice }
-}
-
-export function Narration({ text }: { text: string }) {
+export function Narration({ narrationKey }: { narrationKey: TranslationKey }) {
   const t = useT()
-  const { soundEnabled } = useSettings()
-  const { speak, cancel, hasVoice } = useSpeech()
+  const { locale, soundEnabled } = useSettings()
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const text = t(narrationKey)
 
   /*
    * The live region has to exist *before* it has anything to say.
@@ -102,18 +32,30 @@ export function Narration({ text }: { text: string }) {
    * Navigating remounts the whole chapter, so the region and its first
    * sentence would otherwise enter the DOM in the same commit — and a live
    * region inserted already full is not announced by any screen reader. The
-   * app's central promise would then break at exactly the moment it matters,
-   * the change of chapter. Rendering empty for one commit and filling it in an
+   * app's central promise would break at exactly the moment it matters, the
+   * change of chapter. Rendering empty for one commit and filling it in an
    * effect is what makes the change a *change*.
    */
   const [announced, setAnnounced] = useState('')
   useEffect(() => setAnnounced(text), [text])
 
+  const play = useCallback(() => {
+    const audio = (audioRef.current ??= new Audio())
+    audio.pause()
+    audio.src = narrationUrl(locale, narrationKey)
+    // Rejects when the browser blocks audio before any user gesture. Sound is
+    // opt-in here, so that only happens on the very first line, and silence is
+    // the correct outcome then.
+    void audio.play().catch(() => {})
+  }, [locale, narrationKey])
+
   useEffect(() => {
-    if (!soundEnabled || !hasVoice) return
-    speak(text)
-    return cancel
-  }, [text, soundEnabled, hasVoice, speak, cancel])
+    if (!soundEnabled) return
+    play()
+    return () => audioRef.current?.pause()
+  }, [soundEnabled, play])
+
+  useEffect(() => () => audioRef.current?.pause(), [])
 
   return (
     <div className="mx-auto w-full max-w-3xl px-4">
@@ -124,27 +66,15 @@ export function Narration({ text }: { text: string }) {
         >
           {announced}
         </p>
-        {hasVoice ? (
-          <button
-            type="button"
-            onClick={() => speak(text)}
-            className="grid size-16 shrink-0 place-items-center rounded-full border-2 border-edge bg-chamber text-ray transition-colors hover:border-ray"
-            aria-label={t('sound.replay')}
-          >
-            <SpeakerIcon />
-          </button>
-        ) : null}
+        <button
+          type="button"
+          onClick={play}
+          className="grid size-16 shrink-0 place-items-center rounded-full border-2 border-edge bg-chamber text-ray transition-colors hover:border-ray"
+          aria-label={t('sound.replay')}
+        >
+          <SpeakerIcon />
+        </button>
       </div>
-      {/*
-       * Nothing is said about a missing voice.
-       *
-       * A six-year-old cannot act on "no voice on this device", and the adult
-       * who could is not reading the bottom of the screen — so the line was
-       * addressed to nobody while taking up room in a child's field of view.
-       * The sound button is simply absent where no voice exists, and the
-       * instructions for installing one live in the README, where someone can
-       * actually follow them.
-       */}
     </div>
   )
 }

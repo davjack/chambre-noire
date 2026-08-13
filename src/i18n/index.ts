@@ -46,7 +46,3 @@ export function translate(
   )
 }
 
-/** BCP 47 tag for `speechSynthesis` and `Intl`. */
-export function bcp47(locale: Locale): string {
-  return locale === 'fr' ? 'fr-FR' : 'en-GB'
-}
