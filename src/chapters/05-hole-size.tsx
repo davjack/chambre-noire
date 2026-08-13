@@ -39,7 +39,15 @@ const sliderFromHole = (d: number) =>
 export function HoleSizeChapter() {
   const t = useT()
   const [slider, setSlider] = useState(0.75)
-  const [darkAdapted, setDarkAdapted] = useState(false)
+  /*
+   * On by default, and that is the realistic setting, not the forgiving one:
+   * someone standing inside a camera obscura *does* adapt, and sees the image
+   * perfectly well. Left off, the sharpest hole renders almost black — f/278 —
+   * and the chapter's own lesson becomes invisible at the exact point it is
+   * being made. Turning it off is the reveal: "look how little light there
+   * really is". The brightness meter tells the true story either way.
+   */
+  const [darkAdapted, setDarkAdapted] = useState(true)
   const [usingFallback, setUsingFallback] = useState(false)
 
   const holeDiameter = holeFromSlider(slider)
