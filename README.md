@@ -38,6 +38,9 @@ The pictures are not illustrations of the physics — they are drawn from it.
   curve bottoms out.
 - The lit band a chapter draws on the wall is *exactly* `geometricBlur` tall —
   asserted by a test, not by eye.
+- Chapter 8 bites the picture of the Sun on the side opposite the sky, because
+  the rays crossed at the hole. That inversion is asserted too, along with the
+  rule that the Moon's shadow never darkens wall the Sun was not lighting.
 - Chapter 5 runs a WebGL2 fragment shader that integrates the scene over the
   aperture disc, in linear light. A CSS blur would have got blurrier the more
   you turned it up; a real pinhole gets blurrier at **both** ends, and finding
@@ -111,7 +114,7 @@ without a rebuild. No environment variables, no backend, nothing to configure.
 
 ## Constraints it holds itself to
 
-- **73.9 KB of JavaScript**, gzipped — budget of 200 KB, enforced by
+- **74.2 KB of JavaScript**, gzipped — budget of 200 KB, enforced by
   `npm run verify`.
 - **Zero WCAG 2.2 AA violations** on every chapter, checked by axe in CI-able
   tests, not asserted in prose.

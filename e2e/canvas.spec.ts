@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test'
-import { PNG } from 'pngjs'
+
+import { litFraction as litPixels } from './pixels'
 
 /**
  * The two chapters that draw on a canvas, checked for the one failure the rest
@@ -13,25 +14,9 @@ import { PNG } from 'pngjs'
  * passed against the build.
  */
 
-/**
- * Fraction of the canvas that is not background, measured from a screenshot.
- *
- * Reading the canvas back in the page does not work: a WebGL context without
- * `preserveDrawingBuffer` has an empty drawing buffer by the time any script
- * can look at it, and turning that flag on would cost every visitor
- * performance to satisfy a test. A screenshot measures what the child sees,
- * and it works identically for the WebGL path and the 2D fallback.
- */
+/** The canvas of the chapter under test, measured the way the child sees it. */
 async function litFraction(page: Page): Promise<number> {
-  const shot = await page.locator('canvas').first().screenshot()
-  const { data } = PNG.sync.read(shot)
-  let lit = 0
-  let counted = 0
-  for (let i = 0; i < data.length; i += 4 * 97) {
-    counted += 1
-    if ((data[i] ?? 0) + (data[i + 1] ?? 0) + (data[i + 2] ?? 0) > 60) lit += 1
-  }
-  return counted ? lit / counted : 0
+  return litPixels(page.locator('canvas').first())
 }
 
 async function contextIsAlive(page: Page): Promise<boolean> {

@@ -1,6 +1,7 @@
 import { expect, test, type ConsoleMessage, type Page } from '@playwright/test'
 
 import { SLUGS } from './chapters'
+import { litFraction } from './pixels'
 
 /** Collects anything the browser complains about while a test runs. */
 function watchForErrors(page: Page): string[] {
@@ -62,6 +63,38 @@ test('sliders move and the narration follows', async ({ page }) => {
 
   expect(wideOpen).not.toBe(sweetSpot)
   expect(sweetSpot).toBeTruthy()
+})
+
+/*
+ * The two mechanisms chapter 8 exists for, asserted on the pixels.
+ *
+ * Everything else in this file would pass with the scene frozen: the chapter
+ * opens, the heading is there, axe is happy. Both defects found while building
+ * it were of exactly that kind — a picture that did not answer the control —
+ * so what is checked here is that acting on it changes what is on screen, in
+ * the direction the physics requires.
+ */
+test('the box chapter bites the picture, and the leak drowns it', async ({ page }) => {
+  await page.goto('/#/your-box')
+  const scene = page.locator('#scene')
+  const narration = page.locator('[aria-live="polite"]')
+  const slider = page.getByRole('slider').first()
+
+  await slider.fill('0')
+  const clear = await litFraction(scene)
+  const clearLine = await narration.textContent()
+
+  // The Moon takes a bite: less light in the sky and less on the paper.
+  await slider.fill('1')
+  const eclipsed = await litFraction(scene)
+  expect(eclipsed).toBeLessThan(clear)
+  expect(await narration.textContent()).not.toBe(clearLine)
+
+  // A seam comes open: the chamber floods, so more of the scene is lit — and
+  // the line being read says the picture is gone.
+  await page.getByRole('button', { name: /Faire une fuite|Make a leak/ }).click()
+  expect(await litFraction(scene)).toBeGreaterThan(eclipsed)
+  expect(await narration.textContent()).toMatch(/disparu|gone/)
 })
 
 test('progress survives a reload', async ({ page }) => {

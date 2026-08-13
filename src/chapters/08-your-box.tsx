@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import { BackWall, Box, CentreRay, Scene, SceneLabel, WALL_THICKNESS } from '../engine/RayDiagram'
 import { createGeometry } from '../engine/geometry'
+import { eclipseImage } from './eclipse'
 import { useT } from '../i18n/useT'
 import { BigSlider } from '../shell/BigSlider'
 import { ChapterShell } from '../shell/ChapterShell'
@@ -76,14 +77,18 @@ export function YourBoxChapter() {
   const moonRadius = SUN_RADIUS * MOON_RATIO
 
   // Everything on the image side is the geometry's answer, inversion included.
-  const imageRadius = geometry.imageHeight(SUN_RADIUS)
-  const moonImageRadius = geometry.imageHeight(moonRadius)
-  const moonImageCentre = geometry.landing(moonCentreY, 0)
+  // It lives in `eclipse.ts` because it is the part of this chapter that can
+  // quietly stop agreeing with the physics, and a unit test holds it there.
+  const {
+    imageRadius,
+    moonImageRadius,
+    moonImageCentre,
+    litTop,
+    litBottom,
+    shadowTop,
+    shadowHeight,
+  } = eclipseImage(geometry, { sunRadius: SUN_RADIUS, moonRadius, moonCentreY })
 
-  // `toSvg` is the only thing allowed to flip y, so nothing below subtracts
-  // from `axisY` by hand: an object-side height and a screen coordinate look
-  // alike and mixing them silently is how a diagram starts lying.
-  const onWall = (sceneY: number) => geometry.toSvg({ x: BOX_LENGTH, y: sceneY }).y
   const sun = geometry.toSvg({ x: -OBJECT_DISTANCE, y: 0 })
   const moon = geometry.toSvg({ x: -OBJECT_DISTANCE, y: moonCentreY })
   const top = axisY - BOX_HALF_HEIGHT
@@ -91,17 +96,6 @@ export function YourBoxChapter() {
   const boxLengthPx = wallX - holeX
   const tapeX = (fraction: number) => holeX + boxLengthPx * fraction
   const gapX = tapeX(TAPE_AT[LEAK_INDEX] ?? 0.5)
-
-  // The lit strip on the paper, seen edge on, and the part of it the Moon has
-  // taken away. Both are read straight off the projected disc, and the dark
-  // part is clipped to the lit one: the Moon's shadow beyond the edge of the
-  // picture falls on wall that was never lit, so drawing it there would put a
-  // dull rectangle on the paper for no physical reason.
-  const litTop = onWall(imageRadius)
-  const litBottom = onWall(-imageRadius)
-  const shadowTop = Math.max(litTop, onWall(moonImageCentre + moonImageRadius))
-  const shadowBottom = Math.min(litBottom, onWall(moonImageCentre - moonImageRadius))
-  const shadowHeight = Math.max(0, shadowBottom - shadowTop)
 
   // The same picture, face on and magnified — the only view in which a
   // crescent is a crescent. The scale is a drawing choice, not an optical
