@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Le Petit Trou">
+  <rect width="64" height="64" rx="14" fill="#06080c" />
+  <!-- Two rays crossing at the pinhole: the whole idea, in one glyph. -->
+  <g stroke="#e69f00" stroke-width="3.5" stroke-linecap="round">
+    <path d="M8 18 L56 46" />
+    <path d="M8 46 L56 18" />
+  </g>
+  <circle cx="32" cy="32" r="6.5" fill="#06080c" />
+  <circle cx="32" cy="32" r="3.5" fill="#ffd166" />
+</svg>

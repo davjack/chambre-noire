@@ -1,0 +1,40 @@
+{
+  "name": "le-petit-trou",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Le Petit Trou — the camera obscura explained to children from age 6, one manipulable idea at a time.",
+  "license": "MIT",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint",
+    "test": "vitest run",
+    "size": "node scripts/check-size.mjs",
+    "verify": "npm run typecheck && npm run lint && npm run test && npm run build && npm run size",
+    "e2e": "playwright test"
+  },
+  "dependencies": {
+    "motion": "^13.1.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.62.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.0.5",
+    "oxlint": "^1.78.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.1",
+    "vitest": "^4.1.10"
+  }
+}

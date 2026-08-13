@@ -1,0 +1,18 @@
+node_modules/
+dist/
+.vite/
+
+# Playwright
+playwright-report/
+test-results/
+blob-report/
+playwright/.cache/
+playwright/.auth/
+
+
+# Editors / OS
+.DS_Store
+*.local
+.idea/
+.vscode/*
+!.vscode/extensions.json
