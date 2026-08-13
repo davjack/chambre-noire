@@ -69,7 +69,7 @@ correctly installed:
 | Chromium-based | **0** |
 
 A school tablet, an iPad and a parent's phone would each have produced something
-different again. The app now ships 44 clips (1.2 MB) generated offline with
+different again. The app now ships 46 clips (1.3 MB) generated offline with
 [Piper](https://github.com/rhasspy/piper), so the narration is identical
 everywhere, works offline, and the voice was chosen by listening to candidates
 rather than by accepting a default.
@@ -117,6 +117,39 @@ The palette is Okabe–Ito, readable with every common form of colour blindness,
 and colour never carries meaning alone — each tracked point also has its own
 shape. The theme is dark because a camera obscura *is* a dark chamber and light
 rays only read as light against black; contrast is still held to WCAG 2.2 AA.
+
+## The story: the chapter that left
+
+Position 8 used to be *Les taches de soleil* — a canopy, a gap between two
+leaves, and the bright patches it casts on the grass, each of them a picture of
+the Sun. The physics was right and the drawing was honest. It was still the
+wrong screen, for one reason: it was the only one in the story with no box in
+it. A child spent ten screens learning what a dark chamber does, then met a
+tree, and then was asked to build a shoebox nobody had ever explained.
+
+It is now *Comment marche ta boîte*: the box of the next chapter, opened along
+its length, with every part labelled by the lesson it carries rather than by
+its own name — the pinhole sorts the light, the tracing paper is the wall, the
+length is the size of the picture, the tape is what keeps it dark. The leak
+toggle is the only place in the app that shows what happens when the chamber is
+*not* sealed, which is the reason step five of the recipe exists.
+
+The eclipse survived the move, and gained from it: the Moon bites the top of
+the Sun and the crescent on the paper is bitten at the bottom. Outdoors, under
+a tree, that inversion is invisible — every patch is a picture of the same Sun,
+so nothing tells the child which way up it landed. Inside the box, with the
+rays crossing at the hole two centimetres away, it is the whole point.
+
+**The cutaway cannot show a crescent**, because a disc seen edge on is a band.
+So the band is drawn where the geometry puts it, lit and dark, and a second
+panel shows the same paper face on, magnified — both fed by the same
+`geometry`, so they cannot disagree. Drawing a circle directly on an edge-on
+wall would have been simpler and would have been a lie.
+
+*Would win:* the outdoor version, as a bonus screen **after** *Fabrique la
+tienne*, for a child who has already built a box and can be told that the gaps
+between the leaves are doing exactly what their pinhole does. It reads as a
+reward there, and as a non sequitur where it was.
 
 ## Known gaps
 

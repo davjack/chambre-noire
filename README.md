@@ -21,7 +21,7 @@ whatever is written can be spoken aloud.
 | 5 | Grand trou ou petit trou ? | Slides the aperture | Sharp or bright: pick one |
 | 6 | Boîte courte ou longue | Slides the box length | Bigger picture, dimmer picture |
 | 7 | Ton œil est une boîte noire | Changes the room light | The pupil is the hole |
-| 8 | Les taches de soleil | Moves the Moon across the Sun | Gaps between leaves are pinholes |
+| 8 | Comment marche ta boîte | Slides the Moon over the Sun, opens a leak | What each part of the box is for — and an eclipse on the paper |
 | 9 | Fabrique la tienne | Reads a recipe | A shoebox, foil and a needle |
 
 French and English, switchable at any point. Deep links per chapter
@@ -67,7 +67,7 @@ perfect while chapters 0 and 5 were black for the whole dev session.
 ## The narration
 
 Every sentence is on screen in large type, and every one of them is also a
-recorded clip that ships with the app — 44 files, 1.2 MB, one per narrated line
+recorded clip that ships with the app — 46 files, 1.3 MB, one per narrated line
 per language.
 
 **Not `speechSynthesis`.** The browser's own voices proved to be a lottery the
@@ -111,11 +111,11 @@ without a rebuild. No environment variables, no backend, nothing to configure.
 
 ## Constraints it holds itself to
 
-- **73.6 KB of JavaScript**, gzipped — budget of 200 KB, enforced by
+- **73.9 KB of JavaScript**, gzipped — budget of 200 KB, enforced by
   `npm run verify`.
 - **Zero WCAG 2.2 AA violations** on every chapter, checked by axe in CI-able
   tests, not asserted in prose.
-- **Same narration on every device**: 44 recorded clips ship with the app, so
+- **Same narration on every device**: 46 recorded clips ship with the app, so
   nothing depends on the voices a browser happens to offer. The text is on
   screen regardless.
 - **Works without WebGL2**: chapters 0 and 5 fall back to an interactive canvas

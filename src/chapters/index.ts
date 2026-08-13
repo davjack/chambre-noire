@@ -8,7 +8,7 @@ import { UpsideDownChapter } from './04-upside-down'
 import { HoleSizeChapter } from './05-hole-size'
 import { BoxLengthChapter } from './06-box-length'
 import { YourEyeChapter } from './07-your-eye'
-import { SunSpotsChapter } from './08-sun-spots'
+import { YourBoxChapter } from './08-your-box'
 import { BuildItChapter } from './09-build-it'
 
 /**
@@ -25,6 +25,6 @@ export const chapterComponents: Record<string, ComponentType> = {
   'hole-size': HoleSizeChapter,
   'box-length': BoxLengthChapter,
   'your-eye': YourEyeChapter,
-  'sun-spots': SunSpotsChapter,
+  'your-box': YourBoxChapter,
   'build-it': BuildItChapter,
 }

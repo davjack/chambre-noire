@@ -20,7 +20,7 @@ export const chapterOrder: readonly ChapterMeta[] = [
   { slug: 'hole-size', titleKey: 'chapter.hole-size.title' },
   { slug: 'box-length', titleKey: 'chapter.box-length.title' },
   { slug: 'your-eye', titleKey: 'chapter.your-eye.title' },
-  { slug: 'sun-spots', titleKey: 'chapter.sun-spots.title' },
+  { slug: 'your-box', titleKey: 'chapter.your-box.title' },
   { slug: 'build-it', titleKey: 'chapter.build-it.title' },
 ] as const
 

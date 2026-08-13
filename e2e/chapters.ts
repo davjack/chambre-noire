@@ -13,6 +13,6 @@ export const SLUGS = [
   'hole-size',
   'box-length',
   'your-eye',
-  'sun-spots',
+  'your-box',
   'build-it',
 ] as const
