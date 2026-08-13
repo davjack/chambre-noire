@@ -180,16 +180,21 @@ export function YourBoxChapter() {
           ))}
 
           {/* The strip the picture makes on the paper, seen edge on, with the
-              part the Moon has taken away drawn dark over it. */}
-          <rect
-            x={wallX}
-            y={litTop}
-            width={16}
-            height={imageRadius * 2}
-            fill="var(--color-ray)"
-            opacity={leaking ? 0.2 : 0.95}
-          />
-          <rect x={wallX} y={shadowTop} width={16} height={shadowHeight} fill="var(--color-wall)" />
+              part the Moon has taken away drawn dark over it. The pair fades
+              together when the box leaks — fading only the lit half would
+              leave the bite drawn crisply on a picture that is meant to be
+              drowning. */}
+          <g opacity={leaking ? 0.2 : 1}>
+            <rect
+              x={wallX}
+              y={litTop}
+              width={16}
+              height={imageRadius * 2}
+              fill="var(--color-ray)"
+              opacity={0.95}
+            />
+            <rect x={wallX} y={shadowTop} width={16} height={shadowHeight} fill="var(--color-wall)" />
+          </g>
 
           {/* A seam has come open: light walks in, floods the chamber and the
               picture drowns in it — chapter two, on the child's own box. */}
