@@ -14,7 +14,11 @@
     "no-console": ["error", { "allow": ["warn", "error"] }],
     "eqeqeq": "error",
     "typescript/consistent-type-imports": "error",
-    "react/react-in-jsx-scope": "off"
+    "react/react-in-jsx-scope": "off",
+    "jsx-a11y/no-noninteractive-tabindex": [
+      "error",
+      { "tags": ["section"], "roles": ["region", "group", "tabpanel"] }
+    ]
   },
   "overrides": [
     {

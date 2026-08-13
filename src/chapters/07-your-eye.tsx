@@ -57,6 +57,15 @@ export function YourEyeChapter() {
       }
     >
       <Scene>
+        {/* Light travels freely up to the pupil and is trapped past it. One
+            chapter, one mounted instance, so a fixed id is safe here. */}
+        <defs>
+          <clipPath id="eye-chamber">
+            <rect x={0} y={0} width={HOLE_X} height={520} />
+            <circle cx={centreX} cy={geometry.axisY} r={radius - 8} />
+          </clipPath>
+        </defs>
+
         {/* The eyeball, drawn around the very same optical geometry. */}
         <circle cx={centreX} cy={geometry.axisY} r={radius} className="fill-chamber" />
         <circle
@@ -73,19 +82,19 @@ export function YourEyeChapter() {
           d={`M ${centreX} ${geometry.axisY - radius + 6}
               A ${radius - 6} ${radius - 6} 0 0 1 ${centreX} ${geometry.axisY + radius - 6}`}
           fill="none"
-          stroke="var(--color-wall)"
-          strokeWidth={14}
+          stroke="var(--color-edge)"
+          strokeWidth={16}
           strokeLinecap="round"
         />
 
-        <g style={{ mixBlendMode: 'screen' }}>
+        <g clipPath="url(#eye-chamber)" style={{ mixBlendMode: 'screen' }}>
           {LANDMARKS.map((landmark) => (
             <Beam
               key={landmark.key}
               geometry={geometry}
               sourceY={landmark.offset * FIGURE_HEIGHT}
               colour={MARK_COLOURS[landmark.key]}
-              opacity={0.3}
+              opacity={0.35}
             />
           ))}
         </g>

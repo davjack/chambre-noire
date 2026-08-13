@@ -75,7 +75,16 @@ export function BuildItChapter() {
 
   return (
     <ChapterShell slug="build-it" narration={t('chapter.build-it.say')}>
-      <div className="h-full w-full max-w-2xl overflow-y-auto px-1">
+      {/* A named region that the keyboard can reach. Both halves are needed: a
+          region that scrolls but cannot be focused leaves a child who has no
+          pointer stuck at step three — caught by the axe pass on the shorter
+          viewport — and a bare `tabIndex` on a nameless div is a focus stop
+          that announces nothing. */}
+      <section
+        aria-label={t('chapter.build-it.title')}
+        tabIndex={0}
+        className="h-full w-full max-w-2xl overflow-y-auto px-1 pt-1"
+      >
         <h2 className="mb-3 text-xl font-bold text-ray">{t('chapter.build-it.materials')}</h2>
         <ul className="mb-7 grid grid-cols-2 gap-3 sm:grid-cols-5">
           {MATERIALS.map((material) => (
@@ -115,7 +124,7 @@ export function BuildItChapter() {
           {t('chapter.build-it.tip')}
         </p>
         <p className="pb-2 text-sm text-muted">{t('chapter.build-it.grownup')}</p>
-      </div>
+      </section>
     </ChapterShell>
   )
 }

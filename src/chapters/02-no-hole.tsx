@@ -20,6 +20,7 @@ const OBJECT_DISTANCE = 430
 const BOX_LENGTH = 300
 const FIGURE_HEIGHT = 250
 const WIDE_ENOUGH = 150
+const WASH_POINTS = [-0.45, -0.34, -0.23, -0.11, 0, 0.11, 0.23, 0.34, 0.45]
 
 export function NoHoleChapter() {
   const t = useT()
@@ -50,21 +51,33 @@ export function NoHoleChapter() {
       }
     >
       <Scene>
-        <BackWall geometry={geometry} glow={0.1 + Math.min(0.9, windowSize / 400)} />
-
-        <g style={{ mixBlendMode: 'screen' }}>
-          {LANDMARKS.map((landmark) => (
-            <Beam
-              key={landmark.key}
-              geometry={geometry}
-              sourceY={landmark.offset * FIGURE_HEIGHT}
-              colour={MARK_COLOURS[landmark.key]}
-              opacity={0.4}
-            />
-          ))}
-        </g>
-
-        <Box geometry={geometry} apertureHeight={windowSize} />
+        <Box geometry={geometry} apertureHeight={windowSize}>
+          <BackWall geometry={geometry} glow={0.1} />
+          <g style={{ mixBlendMode: 'screen' }}>
+            {/* A real object emits from every point of itself, not from three.
+                These pale beams are the rest of the figure, and they are what
+                actually washes the wall out — with only the three landmarks the
+                overlap stays patchy and the chapter's claim goes unproven. */}
+            {WASH_POINTS.map((offset) => (
+              <Beam
+                key={offset}
+                geometry={geometry}
+                sourceY={offset * FIGURE_HEIGHT}
+                colour="#dfe9f5"
+                opacity={0.13}
+              />
+            ))}
+            {LANDMARKS.map((landmark) => (
+              <Beam
+                key={landmark.key}
+                geometry={geometry}
+                sourceY={landmark.offset * FIGURE_HEIGHT}
+                colour={MARK_COLOURS[landmark.key]}
+                opacity={0.4}
+              />
+            ))}
+          </g>
+        </Box>
         <Figure geometry={geometry} centreY={0} height={FIGURE_HEIGHT} />
       </Scene>
     </ChapterShell>

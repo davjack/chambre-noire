@@ -109,8 +109,8 @@ export function HoleSizeChapter() {
         </div>
       }
     >
-      <div className="flex w-full max-w-2xl flex-col items-center gap-2">
-        <div className="aspect-4/3 w-full overflow-hidden rounded-blob border-4 border-edge bg-night">
+      <div className="flex h-full w-full flex-col items-center justify-center gap-2">
+        <div className="aspect-4/3 min-h-0 w-auto max-w-full flex-1 overflow-hidden rounded-blob border-4 border-edge bg-night">
           <PinholeCanvas
             className="size-full"
             holeDiameter={holeDiameter}

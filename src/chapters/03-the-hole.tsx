@@ -70,49 +70,50 @@ export function TheHoleChapter() {
       }
     >
       <Scene>
-        <BackWall geometry={geometry} glow={0.1} />
+        <Box geometry={geometry} apertureHeight={hole}>
+          <BackWall geometry={geometry} glow={0.1} />
 
-        <g style={{ mixBlendMode: 'screen' }}>
-          {LANDMARKS.map((landmark) => (
-            <Beam
-              key={landmark.key}
-              geometry={geometry}
-              sourceY={landmark.offset * FIGURE_HEIGHT}
-              colour={MARK_COLOURS[landmark.key]}
-              opacity={0.35}
-            />
-          ))}
-        </g>
-
-        {/* What each point of the object paints on the wall. */}
-        {LANDMARKS.map((landmark) => {
-          const band = geometry.band(landmark.offset * FIGURE_HEIGHT)
-          const top = geometry.toSvg({ x: geometry.boxLength, y: band.top })
-          const centre = geometry.toSvg({ x: geometry.boxLength, y: band.centre })
-          return (
-            <g key={landmark.key}>
-              <rect
-                x={geometry.wallX}
-                y={top.y}
-                width={16}
-                height={Math.max(2, band.height)}
-                fill={MARK_COLOURS[landmark.key]}
-                opacity={sorted ? 0.35 : 0.8}
+          <g style={{ mixBlendMode: 'screen' }}>
+            {LANDMARKS.map((landmark) => (
+              <Beam
+                key={landmark.key}
+                geometry={geometry}
+                sourceY={landmark.offset * FIGURE_HEIGHT}
+                colour={MARK_COLOURS[landmark.key]}
+                opacity={0.4}
               />
-              {sorted ? (
-                <Mark
-                  x={geometry.wallX + 8}
-                  y={centre.y}
-                  colour={MARK_COLOURS[landmark.key]}
-                  shape={landmark.shape}
-                  size={11}
-                />
-              ) : null}
-            </g>
-          )
-        })}
+            ))}
+          </g>
 
-        <Box geometry={geometry} apertureHeight={hole} />
+          {/* What each point of the object paints on the wall: a band exactly
+              `geometricBlur` tall, collapsing to a dot as the hole closes. */}
+          {LANDMARKS.map((landmark) => {
+            const band = geometry.band(landmark.offset * FIGURE_HEIGHT)
+            const top = geometry.toSvg({ x: geometry.boxLength, y: band.top })
+            const centre = geometry.toSvg({ x: geometry.boxLength, y: band.centre })
+            return (
+              <g key={landmark.key}>
+                <rect
+                  x={geometry.wallX}
+                  y={top.y}
+                  width={16}
+                  height={Math.max(2, band.height)}
+                  fill={MARK_COLOURS[landmark.key]}
+                  opacity={sorted ? 0.35 : 0.8}
+                />
+                {sorted ? (
+                  <Mark
+                    x={geometry.wallX + 8}
+                    y={centre.y}
+                    colour={MARK_COLOURS[landmark.key]}
+                    shape={landmark.shape}
+                    size={11}
+                  />
+                ) : null}
+              </g>
+            )
+          })}
+        </Box>
         <Figure geometry={geometry} centreY={0} height={FIGURE_HEIGHT} />
       </Scene>
     </ChapterShell>

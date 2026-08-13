@@ -61,30 +61,30 @@ export function BoxLengthChapter() {
       }
     >
       <Scene>
-        <BackWall geometry={geometry} glow={0.05 + relative * 0.35} />
+        <Box geometry={geometry} apertureHeight={10}>
+          <BackWall geometry={geometry} glow={0.05 + relative * 0.35} />
 
-        {LANDMARKS.map((landmark) => (
-          <CentreRay
-            key={landmark.key}
+          {LANDMARKS.map((landmark) => (
+            <CentreRay
+              key={landmark.key}
+              geometry={geometry}
+              sourceY={landmark.offset * FIGURE_HEIGHT}
+              colour={MARK_COLOURS[landmark.key]}
+              width={2}
+            />
+          ))}
+
+          {/* The image itself: the same figure, upside down, dimmed by the
+              light it actually receives. */}
+          <Figure
             geometry={geometry}
-            sourceY={landmark.offset * FIGURE_HEIGHT}
-            colour={MARK_COLOURS[landmark.key]}
-            width={2}
+            sceneX={geometry.boxLength}
+            centreY={0}
+            height={geometry.imageHeight(FIGURE_HEIGHT)}
+            flipped
+            opacity={0.35 + relative * 0.65}
           />
-        ))}
-
-        <Box geometry={geometry} apertureHeight={10} />
-
-        {/* The image itself: the same figure, upside down, dimmed by the light
-            it actually receives. */}
-        <Figure
-          geometry={geometry}
-          sceneX={geometry.boxLength}
-          centreY={0}
-          height={geometry.imageHeight(FIGURE_HEIGHT)}
-          flipped
-          opacity={0.35 + relative * 0.65}
-        />
+        </Box>
 
         <Figure geometry={geometry} centreY={0} height={FIGURE_HEIGHT} />
       </Scene>

@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useId, type ReactNode } from 'react'
 
 import { VIEW_HEIGHT, VIEW_WIDTH, type SceneGeometry } from './geometry'
 
@@ -21,7 +21,7 @@ export function Scene({ children, className }: { children: ReactNode; className?
   return (
     <svg
       viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
-      className={`h-full max-h-[58dvh] w-full ${className ?? ''}`}
+      className={`h-full w-full ${className ?? ''}`}
       aria-hidden="true"
       focusable="false"
     >
@@ -30,35 +30,54 @@ export function Scene({ children, className }: { children: ReactNode; className?
   )
 }
 
-/** The dark chamber: two side walls, a front wall pierced by the aperture. */
+/** `useId` output is not safe inside `url(#…)`; the delimiters go, uniqueness stays. */
+function useSafeId(): string {
+  return useId().replaceAll(/[^\dA-Za-z-]/g, '')
+}
+
+/**
+ * The dark chamber.
+ *
+ * Everything the box contains — the back wall, the beams, the image — is passed
+ * as children so it is drawn *between* the chamber floor and the walls.
+ * Painting the chamber over the beams instead was the obvious mistake, and it
+ * hid the very crossing this app exists to show.
+ *
+ * The children are clipped to "anywhere left of the front wall, or inside the
+ * chamber": light approaching the box travels freely, light past the aperture
+ * is confined, exactly as a real box confines it.
+ */
 export function Box({
   geometry,
   apertureHeight,
-  showInterior = true,
   halfHeight = 210,
+  children,
 }: {
   geometry: SceneGeometry
   /** Visual height of the opening, in scene units. */
   apertureHeight: number
-  showInterior?: boolean
   halfHeight?: number
+  children?: ReactNode
 }) {
+  const clipId = useSafeId()
   const { holeX, wallX, axisY } = geometry
   const half = apertureHeight / 2
   const top = axisY - halfHeight
   const bottom = axisY + halfHeight
+  const innerWidth = wallX - holeX + 18
 
   return (
     <g>
-      {showInterior ? (
-        <rect
-          x={holeX}
-          y={top}
-          width={wallX - holeX}
-          height={bottom - top}
-          className="fill-chamber"
-        />
-      ) : null}
+      <defs>
+        <clipPath id={clipId}>
+          <rect x={0} y={0} width={holeX} height={VIEW_HEIGHT} />
+          <rect x={holeX} y={top} width={innerWidth} height={halfHeight * 2} />
+        </clipPath>
+      </defs>
+
+      <rect x={holeX} y={top} width={innerWidth} height={halfHeight * 2} className="fill-chamber" />
+
+      <g clipPath={`url(#${clipId})`}>{children}</g>
 
       {/* Front wall, in two pieces: the gap between them is the aperture.
           Clamped, because chapter 2 opens the window wider than the wall. */}
@@ -78,8 +97,8 @@ export function Box({
       />
 
       {/* Top and bottom of the box. */}
-      <rect x={holeX} y={top - 7} width={wallX - holeX} height={7} className="fill-edge" />
-      <rect x={holeX} y={bottom} width={wallX - holeX} height={7} className="fill-edge" />
+      <rect x={holeX} y={top - 7} width={innerWidth} height={7} className="fill-edge" />
+      <rect x={holeX} y={bottom} width={innerWidth} height={7} className="fill-edge" />
     </g>
   )
 }

@@ -38,7 +38,13 @@ export function ChapterShell({
   }, [slug, markVisited])
 
   return (
-    <div className="flex min-h-dvh flex-col gap-3 pb-[env(safe-area-inset-bottom)]">
+    /*
+     * Fixed to the viewport rather than growing with its content: the scene,
+     * the sentence being spoken and the Next button all have to be visible at
+     * once, on a laptop as much as on a tablet. The scene is the only part
+     * that gives ground, and it does so by shrinking to whatever is left.
+     */
+    <div className="flex h-dvh flex-col gap-2 overflow-hidden pb-[env(safe-area-inset-bottom)]">
       <a
         href="#scene"
         className="sr-only focus:not-sr-only focus:absolute focus:left-3 focus:top-3 focus:z-50 focus:rounded-full focus:bg-ray focus:px-5 focus:py-3 focus:font-bold focus:text-night"
@@ -100,16 +106,14 @@ export function ChapterShell({
         </ol>
       </nav>
 
-      <h1 className="text-balance px-4 text-center text-3xl font-extrabold sm:text-4xl">
+      <h1 className="text-balance px-4 text-center text-2xl font-extrabold sm:text-3xl">
         {t(chapterOrder[index]?.titleKey ?? 'app.title')}
       </h1>
 
-      <main
-        id="scene"
-        tabIndex={-1}
-        className="flex min-h-0 flex-1 items-center justify-center px-3"
-      >
-        {children}
+      <main id="scene" tabIndex={-1} className="relative min-h-0 flex-1 px-3">
+        {/* Absolute so the children get a definite height to size against —
+            `h-full` inside a plain flex item would have nothing to resolve. */}
+        <div className="absolute inset-0 flex items-center justify-center">{children}</div>
       </main>
 
       {controls ? <div className="mx-auto w-full max-w-2xl px-4">{controls}</div> : null}

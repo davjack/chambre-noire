@@ -27,24 +27,27 @@ import { ChapterShell } from '../shell/ChapterShell'
 
 const OBJECT_DISTANCE = 400
 const BOX_LENGTH = 260
-const FIGURE_HEIGHT = 170
-const LATERAL = [76, 0, -76]
+const FIGURE_HEIGHT = 150
+const LATERAL = [68, 0, -68]
+const SIDE_HALF = 100
+const TOP_HALF = 96
+const MAX_LIFT = 60
 
 export function UpsideDownChapter() {
   const t = useT()
-  const [lift, setLift] = useState(55)
+  const [lift, setLift] = useState(45)
 
   const side = createGeometry({
     objectDistance: OBJECT_DISTANCE,
     boxLength: BOX_LENGTH,
     apertureDiameter: 10,
-    axisY: 130,
+    axisY: 152,
   })
   const top = createGeometry({
     objectDistance: OBJECT_DISTANCE,
     boxLength: BOX_LENGTH,
     apertureDiameter: 10,
-    axisY: 390,
+    axisY: 396,
   })
 
   return (
@@ -57,8 +60,8 @@ export function UpsideDownChapter() {
         <BigSlider
           label={t('chapter.upside-down.height')}
           value={lift}
-          min={-90}
-          max={90}
+          min={-MAX_LIFT}
+          max={MAX_LIFT}
           step={1}
           onChange={setLift}
         />
@@ -66,77 +69,85 @@ export function UpsideDownChapter() {
     >
       <Scene>
         {/* ── Side view ─────────────────────────────────────────────── */}
-        <SceneLabel x={20} y={30} anchor="start">
+        <SceneLabel x={980} y={38} anchor="end">
           {t('chapter.upside-down.sideView')}
         </SceneLabel>
-        <BackWall geometry={side} glow={0.1} halfHeight={112} />
-        {LANDMARKS.map((landmark) => (
-          <CentreRay
-            key={landmark.key}
-            geometry={side}
-            sourceY={lift + landmark.offset * FIGURE_HEIGHT}
-            colour={MARK_COLOURS[landmark.key]}
-          />
-        ))}
-        <Box geometry={side} apertureHeight={10} halfHeight={112} />
-        <Figure geometry={side} centreY={lift} height={FIGURE_HEIGHT} />
-        {LANDMARKS.map((landmark) => {
-          const y = side.landing(lift + landmark.offset * FIGURE_HEIGHT, 0)
-          const point = side.toSvg({ x: side.boxLength, y })
-          return (
-            <Mark
+        <Box geometry={side} apertureHeight={10} halfHeight={SIDE_HALF}>
+          <BackWall geometry={side} glow={0.1} halfHeight={SIDE_HALF} />
+          {LANDMARKS.map((landmark) => (
+            <CentreRay
               key={landmark.key}
-              x={point.x + 8}
-              y={point.y}
+              geometry={side}
+              sourceY={lift + landmark.offset * FIGURE_HEIGHT}
               colour={MARK_COLOURS[landmark.key]}
-              shape={landmark.shape}
-              size={9}
             />
-          )
-        })}
+          ))}
+          {LANDMARKS.map((landmark) => {
+            const y = side.landing(lift + landmark.offset * FIGURE_HEIGHT, 0)
+            const point = side.toSvg({ x: side.boxLength, y })
+            return (
+              <Mark
+                key={landmark.key}
+                x={point.x + 8}
+                y={point.y}
+                colour={MARK_COLOURS[landmark.key]}
+                shape={landmark.shape}
+                size={9}
+              />
+            )
+          })}
+        </Box>
+        <Figure geometry={side} centreY={lift} height={FIGURE_HEIGHT} />
 
         <line x1={40} y1={258} x2={960} y2={258} stroke="var(--color-edge)" strokeWidth={2} />
 
         {/* ── Top view ──────────────────────────────────────────────── */}
-        <SceneLabel x={20} y={296} anchor="start">
+        <SceneLabel x={980} y={284} anchor="end">
           {t('chapter.upside-down.topView')}
         </SceneLabel>
-        <BackWall geometry={top} glow={0.1} halfHeight={104} />
-        {LATERAL.map((lateral, index) => {
-          const landmark = LANDMARKS[index]
-          if (!landmark) return null
-          return (
-            <CentreRay
-              key={lateral}
-              geometry={top}
-              sourceY={lateral}
-              colour={MARK_COLOURS[landmark.key]}
-            />
-          )
-        })}
-        <Box geometry={top} apertureHeight={10} halfHeight={104} />
-        {LATERAL.map((lateral, index) => {
-          const landmark = LANDMARKS[index]
-          if (!landmark) return null
-          const source = top.toSvg({ x: -top.objectDistance, y: lateral })
-          const image = top.toSvg({ x: top.boxLength, y: top.landing(lateral, 0) })
-          return (
-            <g key={lateral}>
-              <Mark
-                x={source.x}
-                y={source.y}
+        <Box geometry={top} apertureHeight={10} halfHeight={TOP_HALF}>
+          <BackWall geometry={top} glow={0.1} halfHeight={TOP_HALF} />
+          {LATERAL.map((lateral, index) => {
+            const landmark = LANDMARKS[index]
+            if (!landmark) return null
+            return (
+              <CentreRay
+                key={lateral}
+                geometry={top}
+                sourceY={lateral}
                 colour={MARK_COLOURS[landmark.key]}
-                shape={landmark.shape}
-                size={13}
               />
+            )
+          })}
+          {LATERAL.map((lateral, index) => {
+            const landmark = LANDMARKS[index]
+            if (!landmark) return null
+            const image = top.toSvg({ x: top.boxLength, y: top.landing(lateral, 0) })
+            return (
               <Mark
+                key={lateral}
                 x={image.x + 8}
                 y={image.y}
                 colour={MARK_COLOURS[landmark.key]}
                 shape={landmark.shape}
                 size={9}
               />
-            </g>
+            )
+          })}
+        </Box>
+        {LATERAL.map((lateral, index) => {
+          const landmark = LANDMARKS[index]
+          if (!landmark) return null
+          const source = top.toSvg({ x: -top.objectDistance, y: lateral })
+          return (
+            <Mark
+              key={lateral}
+              x={source.x}
+              y={source.y}
+              colour={MARK_COLOURS[landmark.key]}
+              shape={landmark.shape}
+              size={13}
+            />
           )
         })}
       </Scene>

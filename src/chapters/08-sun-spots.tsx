@@ -104,10 +104,12 @@ export function SunSpotsChapter() {
           </g>
         ))}
 
-        <SceneLabel x={20} y={300} anchor="start" tone="ink">
+        {/* Placed in the two empty bands of the picture: the strip of sky under
+            the canopy, and the grass below the lowest spot. */}
+        <SceneLabel x={22} y={352} anchor="start" tone="ink">
           {t('chapter.sun-spots.leaves')}
         </SceneLabel>
-        <SceneLabel x={20} y={508} anchor="start">
+        <SceneLabel x={22} y={510} anchor="start" tone="ink">
           {t('chapter.sun-spots.ground')}
         </SceneLabel>
       </Scene>

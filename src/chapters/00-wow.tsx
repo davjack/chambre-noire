@@ -36,7 +36,7 @@ export function WowChapter() {
         onClick={() => setOpen((current) => !current)}
         aria-pressed={open}
         aria-label={t('chapter.wow.action')}
-        className="relative aspect-4/3 w-full max-w-2xl overflow-hidden rounded-blob border-4 border-edge bg-night"
+        className="relative aspect-4/3 h-full w-auto max-w-full overflow-hidden rounded-blob border-4 border-edge bg-night"
       >
         <PinholeCanvas
           className={`size-full transition-opacity duration-700 ${open ? 'opacity-100' : 'opacity-0'}`}
