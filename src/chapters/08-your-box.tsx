@@ -84,10 +84,15 @@ export function YourBoxChapter() {
   const gapX = tapeX(LEAK_AT)
 
   // The lit strip on the paper, seen edge on, and the part of it the Moon has
-  // taken away. Both are read straight off the projected disc.
+  // taken away. Both are read straight off the projected disc, and the dark
+  // part is clipped to the lit one: the Moon's shadow beyond the edge of the
+  // picture falls on wall that was never lit, so drawing it there would put a
+  // dull rectangle on the paper for no physical reason.
   const litTop = axisY - imageRadius
-  const shadowTop = axisY - (moonImageCentre + moonImageRadius)
-  const shadowBottom = axisY - (moonImageCentre - moonImageRadius)
+  const litBottom = axisY + imageRadius
+  const shadowTop = Math.max(litTop, axisY - (moonImageCentre + moonImageRadius))
+  const shadowBottom = Math.min(litBottom, axisY - (moonImageCentre - moonImageRadius))
+  const shadowHeight = Math.max(0, shadowBottom - shadowTop)
 
   // The same picture, face on and magnified — the only view in which a
   // crescent is a crescent.
@@ -184,13 +189,7 @@ export function YourBoxChapter() {
             fill="var(--color-ray)"
             opacity={leaking ? 0.2 : 0.95}
           />
-          <rect
-            x={wallX}
-            y={shadowTop}
-            width={16}
-            height={shadowBottom - shadowTop}
-            fill="var(--color-wall)"
-          />
+          <rect x={wallX} y={shadowTop} width={16} height={shadowHeight} fill="var(--color-wall)" />
 
           {/* A seam has come open: light walks in, floods the chamber and the
               picture drowns in it — chapter two, on the child's own box. */}
@@ -246,7 +245,7 @@ export function YourBoxChapter() {
           fill="none"
         >
           <path d={`M ${wallX + 16} ${litTop} L ${PANEL.x} ${PANEL.y}`} />
-          <path d={`M ${wallX + 16} ${litTop + imageRadius * 2} L ${PANEL.x} ${PANEL.y + PANEL.size}`} />
+          <path d={`M ${wallX + 16} ${litBottom} L ${PANEL.x} ${PANEL.y + PANEL.size}`} />
         </g>
         <rect
           x={PANEL.x}
