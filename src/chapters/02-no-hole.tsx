@@ -20,7 +20,9 @@ const OBJECT_DISTANCE = 430
 const BOX_LENGTH = 300
 const FIGURE_HEIGHT = 250
 const WIDE_ENOUGH = 150
-const WASH_POINTS = [-0.45, -0.34, -0.23, -0.11, 0, 0.11, 0.23, 0.34, 0.45]
+const WASH_POINTS = [
+  -0.45, -0.375, -0.3, -0.225, -0.15, -0.075, 0, 0.075, 0.15, 0.225, 0.3, 0.375, 0.45,
+]
 
 export function NoHoleChapter() {
   const t = useT()
@@ -63,8 +65,8 @@ export function NoHoleChapter() {
                 key={offset}
                 geometry={geometry}
                 sourceY={offset * FIGURE_HEIGHT}
-                colour="#dfe9f5"
-                opacity={0.13}
+                colour="#eaf1f8"
+                opacity={0.16}
               />
             ))}
             {LANDMARKS.map((landmark) => (
@@ -73,7 +75,7 @@ export function NoHoleChapter() {
                 geometry={geometry}
                 sourceY={landmark.offset * FIGURE_HEIGHT}
                 colour={MARK_COLOURS[landmark.key]}
-                opacity={0.4}
+                opacity={0.25}
               />
             ))}
           </g>
