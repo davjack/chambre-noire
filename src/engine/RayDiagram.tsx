@@ -107,6 +107,10 @@ export function Box({
  * How thick the back wall is drawn. Exported because a chapter that paints the
  * picture *on* the wall has to cover exactly it — recopying the number leaves
  * the paint hanging in the air the day this changes, and no test would see it.
+ *
+ * `Box` clips its children to 18 units past `wallX`, so there are two units of
+ * margin here. Raise this past 18 and the picture painted on the wall loses
+ * its right edge, silently.
  */
 export const WALL_THICKNESS = 16
 

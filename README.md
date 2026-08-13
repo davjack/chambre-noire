@@ -70,7 +70,7 @@ perfect while chapters 0 and 5 were black for the whole dev session.
 ## The narration
 
 Every sentence is on screen in large type, and every one of them is also a
-recorded clip that ships with the app — 46 files, 1.3 MB, one per narrated line
+recorded clip that ships with the app — 46 files, 1.2 MB, one per narrated line
 per language.
 
 **Not `speechSynthesis`.** The browser's own voices proved to be a lottery the
@@ -90,6 +90,12 @@ accepting whatever the device happened to ship.
 Voices: **fr_FR-tom-medium** and **en_GB-alan-medium**, both from
 [Piper](https://github.com/rhasspy/piper) — neural, permissively licensed, and
 generated offline.
+
+The narration used to have a shake on held vowels. Two settings were doing it,
+and the voices were not: reading slowly by stretching the phonemes, and the
+generator's own variation. Both are turned down now — see
+[the decisions log](docs/decisions.md#narration-recorded-clips-not-speechsynthesis)
+for what was tried, including the measurements that pointed the wrong way.
 
 ### Regenerating the clips
 

@@ -104,6 +104,13 @@ export function YourBoxChapter() {
   const panelScale = (PANEL.size * PANEL_FILL) / imageRadius
   const panelCx = PANEL.x + PANEL.size / 2
   const panelCy = PANEL.y + PANEL.size / 2
+  /**
+   * A scene height, placed inside the panel. The panel has its own origin, so
+   * `toSvg` cannot express this — but writing `panelCy - value * panelScale`
+   * at each of the four places that need it is four chances to drop the sign,
+   * on the one view where a sign error inverts the lesson.
+   */
+  const onPanel = (sceneY: number) => panelCy - sceneY * panelScale
 
   const narrationKey = leaking
     ? 'chapter.your-box.say.leak'
@@ -190,11 +197,16 @@ export function YourBoxChapter() {
               leave the bite drawn crisply on a picture that is meant to be
               drowning. */}
           <g opacity={leaking ? 0.2 : 1}>
+            {/* Height from the two screen ends, not from twice the scene-side
+                radius: those agree only while `toSvg` keeps a scale of one,
+                and `geometry.ts` says in its own header that a schematic scale
+                is unavoidable. Mixing the two frames is what this chapter has
+                already been corrected for once. */}
             <rect
               x={wallX}
               y={litTop}
               width={WALL_THICKNESS}
-              height={imageRadius * 2}
+              height={litBottom - litTop}
               fill="var(--color-ray)"
               opacity={0.95}
             />
@@ -263,12 +275,8 @@ export function YourBoxChapter() {
           {/* On the edges of the picture at both ends, not on the corners of
               the panel: the corners would claim the panel is the picture, and
               draw a magnification the panel does not use. */}
-          <path
-            d={`M ${wallX + WALL_THICKNESS} ${litTop} L ${PANEL.x} ${panelCy - imageRadius * panelScale}`}
-          />
-          <path
-            d={`M ${wallX + WALL_THICKNESS} ${litBottom} L ${PANEL.x} ${panelCy + imageRadius * panelScale}`}
-          />
+          <path d={`M ${wallX + WALL_THICKNESS} ${litTop} L ${PANEL.x} ${onPanel(imageRadius)}`} />
+          <path d={`M ${wallX + WALL_THICKNESS} ${litBottom} L ${PANEL.x} ${onPanel(-imageRadius)}`} />
         </g>
         <rect
           x={PANEL.x}
@@ -285,15 +293,10 @@ export function YourBoxChapter() {
               fill the crescent back in, which is the opposite of what a leak
               does to it. */}
           <g opacity={leaking ? 0.2 : 1}>
+            <circle cx={panelCx} cy={onPanel(0)} r={imageRadius * panelScale} fill="var(--color-ray)" />
             <circle
               cx={panelCx}
-              cy={panelCy}
-              r={imageRadius * panelScale}
-              fill="var(--color-ray)"
-            />
-            <circle
-              cx={panelCx}
-              cy={panelCy - moonImageCentre * panelScale}
+              cy={onPanel(moonImageCentre)}
               r={moonImageRadius * panelScale}
               fill="var(--color-wall)"
             />

@@ -19,8 +19,17 @@ Usage
     .venv/bin/python scripts/generate-narration.py
 
 Models download once into `.voices/` (gitignored, ~60 MB each). The generated
-clips ARE committed: they are deterministic, small, and every deployment needs
-them without a Python toolchain.
+clips ARE committed: they are small, and every deployment needs them without a
+Python toolchain.
+
+They are NOT reproducible byte for byte. Piper samples noise inside the ONNX
+graph and exposes no seed, so the same sentence comes back a different take
+every run — measured at up to 3 % of length. This script also rewrites BOTH
+locales every time, so a French-only edit leaves 23 English clips that are
+audibly different takes of unchanged text. Restore what you did not mean to
+change before committing:
+
+    git checkout -- $(git diff --name-only public/audio/en)
 
 Requires `ffmpeg` on PATH for the MP3 encode.
 """
@@ -110,8 +119,23 @@ def main() -> int:
         print(f"dictionaries disagree on which lines are spoken: {missing}", file=sys.stderr)
         return 1
 
-    # Read to a child: slower than default, and a beat between sentences.
-    synthesis = SynthesisConfig(length_scale=1.12, noise_scale=0.6, noise_w_scale=0.7)
+    # Settled by listening, after a listener called the narration shaky.
+    #
+    # Two things were doing it, and neither is the voice: stretching the
+    # phonemes to read slowly (`length_scale` 1.12) and the generator's own
+    # variation (`noise_scale`, `noise_w_scale`). Piper's sampling wanders over
+    # a held vowel, and stretching that vowel gives it longer to wander.
+    #
+    # Both were put to the ear on the app's own lines, one variable at a time,
+    # against the previous 1.12 / 0.6 / 0.7 — and both were judged clearly
+    # better, so both are applied. The unstretched read is a little quicker
+    # than the deliberately slow one it replaces; the sentences are twelve
+    # words long, and steadiness turned out to matter more than the extra beat.
+    #
+    # Do not tune these by measurement alone. The obvious proxies — pitch
+    # jitter, how cleanly the waveform repeats — rank these settings as
+    # indistinguishable, and were wrong about which one a listener prefers.
+    synthesis = SynthesisConfig(length_scale=1.00, noise_scale=0.33, noise_w_scale=0.45)
 
     total = 0
     for locale, voice_name in VOICES.items():

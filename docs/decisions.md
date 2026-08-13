@@ -69,10 +69,46 @@ correctly installed:
 | Chromium-based | **0** |
 
 A school tablet, an iPad and a parent's phone would each have produced something
-different again. The app now ships 46 clips (1.3 MB) generated offline with
+different again. The app now ships 46 clips (1.2 MB) generated offline with
 [Piper](https://github.com/rhasspy/piper), so the narration is identical
 everywhere, works offline, and the voice was chosen by listening to candidates
 rather than by accepting a default.
+
+### The shake on held vowels, and how it was not found
+
+A listener called the narration shaky. Three things were tried, in this order.
+
+**The MP3 encode: ruled out.** Periodicity of the signal going in and coming
+out of the 64 kbps mono encode: 58.0 % against 58.0 %. The codec is not it.
+
+**The voice model: measured, changed, reverted.** Scored on how cleanly the
+waveform repeats itself over voiced frames, `fr_FR-upmc-medium` beat
+`fr_FR-tom-medium` by 5.2 points — fourteen standard errors, on the app's own
+sentences. The clips were regenerated and the same listener heard **no
+improvement at all**. The measurement was sound and answered the wrong
+question; the voice went back to `tom`, which was liked.
+
+**The synthesis settings: what actually did it.** The same measurement ranked
+these as indistinguishable — every candidate inside its own error bar. Put to
+the ear one variable at a time, two were judged clearly better than the
+previous 1.12 / 0.6 / 0.7, and both are now applied:
+
+| | was | is |
+|---|---|---|
+| `length_scale` | 1.12 | 1.00 |
+| `noise_scale` | 0.6 | 0.33 |
+| `noise_w_scale` | 0.7 | 0.45 |
+
+Piper samples noise while it generates, and a stretched vowel gives that
+sampling longer to wander — which is exactly what a shake is. The narration is
+now about 10 % quicker than the deliberately slow read it replaces (73.6 s
+against 81.5 s over the 23 French lines); the sentences are twelve words long,
+and steadiness was worth more than the extra beat.
+
+**The lesson, which is the reason this entry is long:** the proxies available
+here — pitch jitter, periodicity — rank synthesis settings as noise and rank
+models as decisive. The listener's verdict was the exact opposite on both
+counts. Do not tune these numbers by measurement alone.
 
 **Open objection:** a recorded human would be warmer than a neural voice.
 `scripts/generate-narration.py` is the only file that would change.
