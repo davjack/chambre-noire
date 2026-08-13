@@ -64,17 +64,68 @@ One of its three projects, `dev-strict-mode`, runs the canvas tests against
 there, and a WebGL bug once lived in exactly that gap: the production build was
 perfect while chapters 0 and 5 were black for the whole dev session.
 
-## Narration, and where it works
+## Turning the narration on
 
-The spoken narration uses the browser's `speechSynthesis`, and browsers differ
-sharply on Linux: **Firefox exposes the system voices** through
-`speech-dispatcher` (`sudo apt install speech-dispatcher-espeak-ng`), while
-Chromium-based browsers commonly expose **none at all on the same machine**.
+Every sentence is always on screen in large type, so nothing is ever lost
+without sound. But the app can also read itself aloud, which matters for
+six-year-olds who do not read fluently yet — and that depends entirely on
+whether the *browser* offers a voice.
 
-The app checks rather than assumes. Where no voice exists the sound button is
-not shown — an inviting button that does nothing is worse than no button — and
-a line under the narration says so. Every spoken sentence is always on screen in
-large type regardless, so nothing is ever lost with the sound off.
+The app checks rather than assumes: **where no voice exists, the sound button is
+simply not shown.** So if you see no `Écouter` button, the browser has no voice
+to give. Here is how to get one.
+
+### Linux
+
+The browser matters more than the machine. Measured on one Ubuntu install, same
+session, same system voices:
+
+| Browser | Voices exposed to the page |
+|---|---|
+| **Firefox** | 14 805, of which 315 French |
+| Brave / Chrome / Chromium | **0** |
+
+Chromium-based browsers do not reliably expose `speech-dispatcher` voices on
+Linux. **Use Firefox for the narration.**
+
+```bash
+# 1. Install a speech engine and the bridge browsers talk to
+sudo apt install speech-dispatcher speech-dispatcher-espeak-ng espeak-ng
+
+# 2. Check the system itself can speak
+spd-say -l fr "Bonjour, ceci est un test"
+
+# 3. Check the voices are actually there
+spd-say -L | head
+```
+
+If step 2 is silent, no browser will speak either — fix that first. In Firefox,
+`about:config` → `media.webspeech.synth.enabled` must be `true` (it is by
+default).
+
+For a better voice than eSpeak's robotic one, install a neural engine such as
+`speech-dispatcher-piper` (Debian 13 / Ubuntu 25.04 and later) or PicoTTS
+(`sudo apt install libttspico-utils`), then select it in
+`~/.config/speech-dispatcher/speechd.conf` with `DefaultModule`.
+
+### macOS
+
+Voices ship with the system and every browser exposes them. To add or improve a
+French one: **System Settings → Accessibility → Spoken Content → System Voice →
+Manage Voices**, then download a French (France) voice — the "Enhanced" and
+"Premium" variants are far better than the default.
+
+### Windows
+
+**Settings → Time & Language → Speech → Manage voices → Add voices**, and add
+French. Edge and Chrome then expose it. Windows also offers online neural voices
+through Edge, which sound markedly better.
+
+### Android and iOS
+
+Voices are installed by default and every browser exposes them. On Android,
+**Settings → Accessibility → Text-to-speech output** lets you install a better
+engine and pick the French language pack.
 
 ## Deploying
 

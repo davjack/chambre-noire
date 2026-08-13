@@ -1,3 +1,5 @@
+import { readFileSync, readdirSync } from 'node:fs'
+import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
 import en from './en.json'
@@ -49,6 +51,34 @@ describe('dictionaries', () => {
       (key) => fr[key].length > 100 || en[key].length > 100,
     )
     expect(tooLong).toEqual([])
+  })
+})
+
+/** All application source, tests excluded so they cannot vouch for a key. */
+function readSource(directory: string): string {
+  return readdirSync(directory, { withFileTypes: true })
+    .flatMap((entry) => {
+      const path = join(directory, entry.name)
+      if (entry.isDirectory()) return readSource(path)
+      if (!/\.tsx?$/.test(entry.name) || entry.name.includes('.test.')) return []
+      return [readFileSync(path, 'utf8')]
+    })
+    .join('\n')
+}
+
+describe('every key earns its place', () => {
+  it('is referenced somewhere in the app', () => {
+    const source = readSource('src')
+    const unused = (Object.keys(fr) as Key[]).filter((key) => {
+      if (source.includes(`'${key}'`) || source.includes(`"${key}"`)) return false
+      // Families addressed through a template literal, e.g. `…mark.${landmark}`.
+      const stem = key.slice(0, key.lastIndexOf('.'))
+      return !source.includes(`\`${stem}.\${`)
+    })
+
+    // A dictionary entry nobody reads is either dead weight or a feature that
+    // silently stopped being rendered. This test exists because both happened.
+    expect(unused).toEqual([])
   })
 })
 

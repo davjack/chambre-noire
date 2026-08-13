@@ -135,11 +135,16 @@ export function Narration({ text }: { text: string }) {
           </button>
         ) : null}
       </div>
-      {/* Said once, plainly, whether or not the child ever looked for the
-          sound button — which is now hidden on these devices. */}
-      {hasVoice ? null : (
-        <p className="mt-1 text-center text-sm text-muted">{t('sound.unavailable')}</p>
-      )}
+      {/*
+       * Nothing is said about a missing voice.
+       *
+       * A six-year-old cannot act on "no voice on this device", and the adult
+       * who could is not reading the bottom of the screen — so the line was
+       * addressed to nobody while taking up room in a child's field of view.
+       * The sound button is simply absent where no voice exists, and the
+       * instructions for installing one live in the README, where someone can
+       * actually follow them.
+       */}
     </div>
   )
 }
