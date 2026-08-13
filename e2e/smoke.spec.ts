@@ -1,4 +1,4 @@
-import { expect, test, type ConsoleMessage, type Page } from '@playwright/test'
+import { expect, test, type ConsoleMessage, type Locator, type Page } from '@playwright/test'
 
 import { SLUGS } from './chapters'
 import { litFraction } from './pixels'
@@ -65,33 +65,57 @@ test('sliders move and the narration follows', async ({ page }) => {
   expect(sweetSpot).toBeTruthy()
 })
 
+/** Geometry read back off an SVG circle, so a sign error has somewhere to fail. */
+const centreY = async (target: Locator) => Number(await target.getAttribute('cy'))
+const radius = async (target: Locator) => Number(await target.getAttribute('r'))
+
 /*
- * The two mechanisms chapter 8 exists for, asserted on the pixels.
+ * The two mechanisms chapter 8 exists for.
  *
  * Everything else in this file would pass with the scene frozen: the chapter
  * opens, the heading is there, axe is happy. Both defects found while building
- * it were of exactly that kind — a picture that did not answer the control —
- * so what is checked here is that acting on it changes what is on screen, in
- * the direction the physics requires.
+ * it were of exactly that kind — a picture that did not answer the control.
+ *
+ * The picture on the paper is asserted on the DOM rather than on the pixels,
+ * and that is not a shortcut. Every colour inside the box sits on the same
+ * side of the lit/unlit threshold in every state, so a screenshot of the scene
+ * cannot see the crescent at all — and it certainly cannot tell a bite at the
+ * bottom from a bite at the top, which is the whole claim of the chapter. The
+ * sky and the flooding chamber are what the pixels do measure.
  */
 test('the box chapter bites the picture, and the leak drowns it', async ({ page }) => {
   await page.goto('/#/your-box')
   const scene = page.locator('#scene')
   const narration = page.locator('[aria-live="polite"]')
   const slider = page.getByRole('slider').first()
+  const paperSun = page.getByTestId('paper-sun')
+  const paperMoon = page.getByTestId('paper-moon')
 
   await slider.fill('0')
   const clear = await litFraction(scene)
   const clearLine = await narration.textContent()
 
-  // The Moon takes a bite: less light in the sky and less on the paper.
+  // Sun still clear: the Moon's picture is off the paper entirely, so no bite.
+  expect(await centreY(paperMoon)).toBeGreaterThan(
+    (await centreY(paperSun)) + (await radius(paperSun)) + (await radius(paperMoon)) - 1,
+  )
+
+  // The Moon comes over: less light in the sky…
   await slider.fill('1')
-  const eclipsed = await litFraction(scene)
-  expect(eclipsed).toBeLessThan(clear)
+  expect(await litFraction(scene)).toBeLessThan(clear)
   expect(await narration.textContent()).not.toBe(clearLine)
+
+  // …and on the paper the bite is at the BOTTOM while the sky is bitten at the
+  // top, because the rays crossed at the hole. Invert that sign and the chapter
+  // teaches the opposite of chapter 4 while every other assertion still passes.
+  expect(await centreY(paperMoon)).toBeGreaterThan(await centreY(paperSun))
+  expect(await centreY(paperMoon)).toBeLessThan(
+    (await centreY(paperSun)) + (await radius(paperSun)) + (await radius(paperMoon)),
+  )
 
   // A seam comes open: the chamber floods, so more of the scene is lit — and
   // the line being read says the picture is gone.
+  const eclipsed = await litFraction(scene)
   await page.getByRole('button', { name: /Faire une fuite|Make a leak/ }).click()
   expect(await litFraction(scene)).toBeGreaterThan(eclipsed)
   expect(await narration.textContent()).toMatch(/disparu|gone/)

@@ -29,7 +29,10 @@ locales every time, so a French-only edit leaves 23 English clips that are
 audibly different takes of unchanged text. Restore what you did not mean to
 change before committing:
 
-    git checkout -- $(git diff --name-only public/audio/en)
+    git restore --source=HEAD --worktree -- public/audio/en
+
+(`git checkout --` would read the index, so it does nothing once the clips have
+been staged — which every commit helper does for you before you notice.)
 
 Requires `ffmpeg` on PATH for the MP3 encode.
 """
@@ -121,21 +124,24 @@ def main() -> int:
 
     # Settled by listening, after a listener called the narration shaky.
     #
-    # Two things were doing it, and neither is the voice: stretching the
-    # phonemes to read slowly (`length_scale` 1.12) and the generator's own
-    # variation (`noise_scale`, `noise_w_scale`). Piper's sampling wanders over
-    # a held vowel, and stretching that vowel gives it longer to wander.
+    # The culprit was `length_scale`. Reading slowly was done by stretching the
+    # phonemes, and Piper samples noise as it generates: a held vowel gives that
+    # sampling longer to wander, which is what a shake is. Unstretched, the
+    # shake goes.
     #
-    # Both were put to the ear on the app's own lines, one variable at a time,
-    # against the previous 1.12 / 0.6 / 0.7 — and both were judged clearly
-    # better, so both are applied. The unstretched read is a little quicker
-    # than the deliberately slow one it replaces; the sentences are twelve
-    # words long, and steadiness turned out to matter more than the extra beat.
+    # Two candidates were put to the ear against the previous 1.12 / 0.6 / 0.7 —
+    # this one, and 1.12 / 0.33 / 0.45, which keeps the slow read and turns the
+    # generator's variation down instead. This one won clearly.
     #
-    # Do not tune these by measurement alone. The obvious proxies — pitch
-    # jitter, how cleanly the waveform repeats — rank these settings as
+    # **Do not combine them.** That was tried: 1.00 / 0.33 / 0.45, on the
+    # assumption that two separately-preferred changes would add up. The same
+    # listener called the result worse than either. Less variation and less
+    # stretch together flatten the voice.
+    #
+    # Do not tune these by measurement alone either. The obvious proxies — pitch
+    # jitter, how cleanly the waveform repeats — rank all of these as
     # indistinguishable, and were wrong about which one a listener prefers.
-    synthesis = SynthesisConfig(length_scale=1.00, noise_scale=0.33, noise_w_scale=0.45)
+    synthesis = SynthesisConfig(length_scale=1.00, noise_scale=0.6, noise_w_scale=0.7)
 
     total = 0
     for locale, voice_name in VOICES.items():

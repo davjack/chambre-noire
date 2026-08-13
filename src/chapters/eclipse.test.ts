@@ -30,6 +30,18 @@ describe('the picture of an eclipse on the back wall', () => {
   })
 
   /*
+   * The panel draws the crescent from these two directly, and the clamp above
+   * hides a mistake in either: with the shadow bounded by the lit strip, a
+   * Moon projected at the wrong size or the wrong depth still produces a
+   * plausible-looking bite. Pin them to the geometry rather than to the shape
+   * they happen to make.
+   */
+  it('projects the Moon at its own size and depth', () => {
+    expect(image(0.6).moonImageRadius).toBeCloseTo(geometry.imageHeight(MOON_RADIUS), 10)
+    expect(image(0.6).moonImageCentre).toBeCloseTo(geometry.landing(SUN_RADIUS * 0.6, 0), 10)
+  })
+
+  /*
    * This one is the reason the file exists. The shadow was drawn at the full
    * height of the Moon's projected disc, so with the Sun still clear it sat
    * below the picture entirely — a dull block on a wall that no light had

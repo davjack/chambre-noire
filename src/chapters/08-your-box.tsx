@@ -1,6 +1,14 @@
 import { useState } from 'react'
 
-import { BackWall, Box, CentreRay, Scene, SceneLabel, WALL_THICKNESS } from '../engine/RayDiagram'
+import {
+  BackWall,
+  Box,
+  CentreRay,
+  Scene,
+  SceneLabel,
+  WALL_THICKNESS,
+  boxInnerWidth,
+} from '../engine/RayDiagram'
 import { createGeometry } from '../engine/geometry'
 import { eclipseImage } from './eclipse'
 import { useT } from '../i18n/useT'
@@ -162,17 +170,9 @@ export function YourBoxChapter() {
           </clipPath>
         </defs>
 
-        {/* ── The Sun, and the Moon taking a bite out of its top ──────────── */}
+        {/* ── The Sun ─────────────────────────────────────────────────────── */}
         <circle cx={sun.x} cy={sun.y} r={SUN_RADIUS * 1.9} fill="url(#your-box-halo)" />
         <circle cx={sun.x} cy={sun.y} r={SUN_RADIUS} fill="var(--color-ray)" />
-        <circle
-          cx={moon.x}
-          cy={moon.y}
-          r={moonRadius}
-          fill="var(--color-night)"
-          stroke="var(--color-edge)"
-          strokeWidth={2}
-        />
 
         {/* ── The box, opened along its length ────────────────────────────── */}
         <Box geometry={geometry} apertureHeight={APERTURE} halfHeight={BOX_HALF_HEIGHT}>
@@ -234,7 +234,7 @@ export function YourBoxChapter() {
               <rect
                 x={holeX}
                 y={top}
-                width={wallX - holeX + 18}
+                width={boxInnerWidth(geometry)}
                 height={BOX_HALF_HEIGHT * 2}
                 fill="var(--color-ray)"
                 opacity={0.07}
@@ -242,6 +242,21 @@ export function YourBoxChapter() {
             </g>
           ) : null}
         </Box>
+
+        {/* The Moon, drawn after the rays that leave the Sun rather than before
+            them. Both rays start on the Sun's limb, and once the Moon is well
+            over it they start *inside* the Moon: painted underneath, they read
+            as light coming out of the disc whose whole job on this screen is to
+            block it. The chapter this one replaced had the same order for the
+            same reason. */}
+        <circle
+          cx={moon.x}
+          cy={moon.y}
+          r={moonRadius}
+          fill="var(--color-night)"
+          stroke="var(--color-edge)"
+          strokeWidth={2}
+        />
 
         {/* Kitchen foil over the front: the same object the next chapter puts
             on the shopping list. Drawn after the box, over its front wall. */}
@@ -293,8 +308,20 @@ export function YourBoxChapter() {
               fill the crescent back in, which is the opposite of what a leak
               does to it. */}
           <g opacity={leaking ? 0.2 : 1}>
-            <circle cx={panelCx} cy={onPanel(0)} r={imageRadius * panelScale} fill="var(--color-ray)" />
+            {/* The two `data-testid`s are the only test hooks in the app, and
+                they earn it: this pair is the one place a crescent is drawn,
+                the sign that puts the bite at the bottom is written by hand
+                here, and reading the pixels cannot tell a bite at the bottom
+                from a bite at the top. */}
             <circle
+              data-testid="paper-sun"
+              cx={panelCx}
+              cy={onPanel(0)}
+              r={imageRadius * panelScale}
+              fill="var(--color-ray)"
+            />
+            <circle
+              data-testid="paper-moon"
               cx={panelCx}
               cy={onPanel(moonImageCentre)}
               r={moonImageRadius * panelScale}

@@ -91,9 +91,10 @@ Voices: **fr_FR-tom-medium** and **en_GB-alan-medium**, both from
 [Piper](https://github.com/rhasspy/piper) — neural, permissively licensed, and
 generated offline.
 
-The narration used to have a shake on held vowels. Two settings were doing it,
-and the voices were not: reading slowly by stretching the phonemes, and the
-generator's own variation. Both are turned down now — see
+The narration used to have a shake on held vowels, and the voices were not what
+was doing it: reading slowly was done by stretching the phonemes, and a
+stretched vowel gives the synthesiser's own noise longer to wander. It is read
+unstretched now — see
 [the decisions log](docs/decisions.md#narration-recorded-clips-not-speechsynthesis)
 for what was tried, including the measurements that pointed the wrong way.
 
@@ -146,8 +147,8 @@ it does.
 
 The pedagogical approach — manipulate rather than read — is borrowed from
 [eclipse.anisayari.com](https://eclipse.anisayari.com/) by Anis Ayari. Chapter 8
-is the wink back at it: the crescents under a tree during an eclipse are pinhole
-images of the Sun.
+is the wink back at it: point the box you are about to build at an eclipse and
+the crescent lands on the tracing paper, upside down.
 
 Optics formulas: [Pinhole camera](https://en.wikipedia.org/wiki/Pinhole_camera).
 

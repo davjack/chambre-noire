@@ -47,6 +47,19 @@ function useSafeId(): string {
  * chamber": light approaching the box travels freely, light past the aperture
  * is confined, exactly as a real box confines it.
  */
+/**
+ * How far the chamber runs past the back wall. Exported with `boxInnerWidth`
+ * so a chapter filling the chamber — a light leak, a wash — covers exactly what
+ * `Box` clips to, instead of recopying the number and quietly falling short of
+ * it later.
+ */
+export const BOX_BACK_MARGIN = 18
+
+/** Width of the chamber a `Box` draws, from the hole to past the back wall. */
+export function boxInnerWidth(geometry: SceneGeometry): number {
+  return geometry.wallX - geometry.holeX + BOX_BACK_MARGIN
+}
+
 export function Box({
   geometry,
   apertureHeight,
@@ -60,11 +73,11 @@ export function Box({
   children?: ReactNode
 }) {
   const clipId = useSafeId()
-  const { holeX, wallX, axisY } = geometry
+  const { holeX, axisY } = geometry
   const half = apertureHeight / 2
   const top = axisY - halfHeight
   const bottom = axisY + halfHeight
-  const innerWidth = wallX - holeX + 18
+  const innerWidth = boxInnerWidth(geometry)
 
   return (
     <g>

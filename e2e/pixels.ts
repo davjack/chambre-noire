@@ -13,6 +13,12 @@ import { PNG } from 'pngjs'
  *
  * Sampled every 97th pixel: prime, so it never lines up with a repeating
  * pattern, and fast enough to run on every assertion.
+ *
+ * The threshold of 60 is closer to the palette than it looks: `--color-chamber`
+ * sums to exactly 60 and so counts as unlit, which is what lets a caller see a
+ * light leak flooding a box. Darken or lighten that token by one on any channel
+ * and this stops discriminating — the failure will show up as an assertion
+ * about a fraction, saying nothing about colour, so start here.
  */
 export async function litFraction(target: Locator): Promise<number> {
   const shot = await target.screenshot()

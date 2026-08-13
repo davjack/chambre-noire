@@ -90,25 +90,34 @@ question; the voice went back to `tom`, which was liked.
 
 **The synthesis settings: what actually did it.** The same measurement ranked
 these as indistinguishable — every candidate inside its own error bar. Put to
-the ear one variable at a time, two were judged clearly better than the
-previous 1.12 / 0.6 / 0.7, and both are now applied:
+the ear one variable at a time against the previous 1.12 / 0.6 / 0.7, two came
+back better, and the winner was clear:
 
 | | was | is |
 |---|---|---|
-| `length_scale` | 1.12 | 1.00 |
-| `noise_scale` | 0.6 | 0.33 |
-| `noise_w_scale` | 0.7 | 0.45 |
+| `length_scale` | 1.12 | **1.00** |
+| `noise_scale` | 0.6 | 0.6 |
+| `noise_w_scale` | 0.7 | 0.7 |
 
-Piper samples noise while it generates, and a stretched vowel gives that
-sampling longer to wander — which is exactly what a shake is. The narration is
-now about 10 % quicker than the deliberately slow read it replaces (73.6 s
-against 81.5 s over the 23 French lines); the sentences are twelve words long,
-and steadiness was worth more than the extra beat.
+Reading slowly was done by stretching the phonemes, and Piper samples noise as
+it generates: a held vowel gives that sampling longer to wander, which is what
+a shake is. The narration is now about 10 % quicker than the deliberately slow
+read it replaces; the sentences are twelve words long, and steadiness was worth
+more than the extra beat.
+
+**Rejected: combining the two candidates.** The runner-up kept the slow read and
+turned the generator's variation down instead — 1.12 / 0.33 / 0.45 — and was
+also judged better than the original. Both were applied together on the
+assumption that two separate improvements add up. The same listener called the
+result worse than either: less variation and less stretch together flatten the
+voice. *Would win* only if someone listens to it and says so.
 
 **The lesson, which is the reason this entry is long:** the proxies available
 here — pitch jitter, periodicity — rank synthesis settings as noise and rank
 models as decisive. The listener's verdict was the exact opposite on both
-counts. Do not tune these numbers by measurement alone.
+counts, and it also rejected a combination that both halves of the measurement
+endorsed. Do not tune these numbers by measurement alone, and do not ship a
+setting nobody has heard.
 
 **Open objection:** a recorded human would be warmer than a neural voice.
 `scripts/generate-narration.py` is the only file that would change.
@@ -204,3 +213,12 @@ Not defects — work that was scoped out and would be worth doing:
   behaviour is entirely the host's. Content-hashing the names would settle it;
   `src/shell/narrationAudio.ts` and `scripts/generate-narration.py` are the two
   ends that would have to agree.
+- `scripts/generate-narration.py` cannot regenerate one language on its own. It
+  deletes every clip and loops over both locales, and Piper's output is not
+  reproducible byte for byte — no seed is exposed, and takes differ by up to
+  3 % in length. So editing one French line rewrites 23 English clips as
+  different takes of unchanged text, and the only thing standing between that
+  and the history is a `git checkout` the docstring now spells out. A `--locale`
+  filter would close it. The tests that would catch a filter written wrongly
+  already exist and are named for it: `is complete for {locale}`, `has no clip
+  left behind by a renamed key`, `holds real audio, not empty files`.
