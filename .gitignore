@@ -9,7 +9,6 @@ blob-report/
 playwright/.cache/
 playwright/.auth/
 
-
 # Editors / OS
 .DS_Store
 *.local

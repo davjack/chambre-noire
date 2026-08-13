@@ -1,0 +1,127 @@
+# Design decisions
+
+Why this project looks the way it does: what was weighed, what was rejected,
+and which objections to the current design are still open.
+
+Nothing here is settled forever. Each entry names the condition under which the
+rejected option would win, so a future change has something to argue against.
+
+---
+
+## Rendering: 2D everywhere, a shader in one place
+
+Chapters draw with SVG, computed from `src/physics/optics.ts`. One chapter —
+*Grand trou ou petit trou ?* — runs a WebGL2 fragment shader that integrates the
+scene over the aperture disc.
+
+**Rejected: full 3D with three.js / React Three Fiber.** Free 3D navigation
+costs a six-year-old more attention than it returns, the core idea (rays
+crossing at the hole) reads better in a flat cutaway, and the bundle triples.
+*Would win* for a 10+ audience, or if spatial exploration were the goal.
+
+**Rejected: no WebGL at all, a CSS blur instead.** A blur filter gets blurrier
+the more you turn it up, full stop. A real pinhole gets blurrier at **both**
+ends — wide open because the hole is a disc, nearly shut because light
+diffracts — and finding the sweet spot between them is the entire point of that
+chapter. A CSS blur would have taught the opposite. *Would win* if the chapter
+were dropped.
+
+**Open objection:** a pinhole app for six-year-olds does not obviously need a
+GPU at all. It is the only GPU dependency, and it falls back to an interactive
+2D canvas driven by the same numbers. If measurement on a target tablet showed
+the shader below 30 fps, the fallback should become the primary path.
+
+## Deliberately absent dependencies
+
+No 3D library, no router, no i18n framework, no state manager.
+
+- **Router** — ten linear chapters with deep links need about thirty lines of
+  hash routing. A router is more code to download, not less to write.
+- **i18n framework** — around ninety strings. A JSON dictionary plus a `useT()`
+  hook is enough, and deriving `TranslationKey` from the French file makes a
+  missing translation a build error.
+- **State manager** — React state plus one context. Progress persists in
+  `localStorage`, and every failure mode of that (absent, throwing in private
+  mode, holding rubbish) is unit-tested.
+
+*Would win:* any of these, the moment the app grows a second axis of navigation
+or a shared mutable model.
+
+## Linting: oxlint, not ESLint
+
+Not a preference — a hard constraint. `typescript-eslint` declares the peer
+range `"typescript": ">=4.8.4 <6.1.0"`, so it cannot run against TypeScript 7.
+oxlint is used instead, and its type-aware rules are built on the same Go port
+of the compiler.
+
+*Fallback if oxlint ever blocks the work:* pin TypeScript 6 and switch back.
+
+## Narration: recorded clips, not `speechSynthesis`
+
+The browser's own voices proved to be a lottery the audience loses. Measured on
+one Linux desktop, in a single session, with `speech-dispatcher` and eSpeak
+correctly installed:
+
+| Browser | Voices offered to the page |
+|---|---|
+| Firefox | 14 805 — every one an eSpeak variant, unintelligible in French to a six-year-old |
+| Chromium-based | **0** |
+
+A school tablet, an iPad and a parent's phone would each have produced something
+different again. The app now ships 44 clips (1.3 MB) generated offline with
+[Piper](https://github.com/rhasspy/piper), so the narration is identical
+everywhere, works offline, and the voice was chosen by listening to candidates
+rather than by accepting a default.
+
+**Open objection:** a recorded human would be warmer than a neural voice.
+`scripts/generate-narration.py` is the only file that would change.
+
+## Page layout: an app shell
+
+Fixed header, one scrolling middle, fixed bottom panel carrying the narrated
+line and the navigation. Three earlier shapes each failed a real case:
+
+1. **A page that grows** put the *Suite* button below the fold on all ten
+   chapters in landscape and at 200 % browser zoom. A child who cannot see the
+   way forward does not go looking for it.
+2. **A pinned height with clipped overflow** put the button out of reach
+   entirely — a failure of WCAG 1.4.4 and 1.4.10, not a cosmetic one.
+3. **A sticky footer** kept the buttons visible but let the narrated line —
+   the one that carries the lesson — scroll underneath it.
+
+When room runs short the order is settled: **the way forward, then the sentence
+being taught, then the controls, then the picture.** `e2e/layout.spec.ts`
+asserts it across eight viewports, and scrolls nothing before asserting —
+because the test it replaced called `scrollIntoViewIfNeeded()` first, and so
+proved reachability rather than visibility while the defect was live.
+
+The height unit is `svh`, not `dvh`: the dynamic unit sizes to the layout
+viewport, which on a phone is taller than the visible area.
+
+## Visual language: geometric, not illustrated
+
+Flat shapes rather than drawings. Illustration done by a developer looks
+half-finished next to the best work in this genre; a strict geometric language
+can be executed cleanly in code.
+
+**Open objection:** a warm, picture-book look would suit the audience better.
+That needs an illustrator and an asset pipeline.
+
+## Colour and contrast
+
+The palette is Okabe–Ito, readable with every common form of colour blindness,
+and colour never carries meaning alone — each tracked point also has its own
+shape. The theme is dark because a camera obscura *is* a dark chamber and light
+rays only read as light against black; contrast is still held to WCAG 2.2 AA.
+
+## Known gaps
+
+Not defects — work that was scoped out and would be worth doing:
+
+- A quiz chapter (tap and drag, no reading required).
+- A live camera mode: `getUserMedia` fed through the same pinhole shader.
+  Explicit opt-in, local only, no recording.
+- An offline PWA, for classrooms with poor wifi.
+- Open Graph image and social metadata.
+- The audio clip filenames are not content-hashed, so a regenerated clip keeps
+  its name. Caching is deliberately short for `/audio/` as a result.
