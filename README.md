@@ -53,11 +53,28 @@ npm run dev        # http://localhost:5173
 | Command | What it does |
 |---------|--------------|
 | `npm run verify` | typecheck + lint + unit tests + build + gzip budget |
-| `npm run e2e` | Playwright: every chapter opens, axe WCAG 2.2 AA, two viewports |
+| `npm run e2e` | Playwright: every chapter, axe WCAG 2.2 AA, canvas pixels, three projects |
 | `npm run build` | Static site into `dist/` |
 | `npm run preview` | Serves the built site |
 
 `npm run e2e` needs a browser once: `npx playwright install chromium`.
+
+One of its three projects, `dev-strict-mode`, runs the canvas tests against
+`npm run dev` rather than the build. React StrictMode mounts every effect twice
+there, and a WebGL bug once lived in exactly that gap: the production build was
+perfect while chapters 0 and 5 were black for the whole dev session.
+
+## Narration, and where it works
+
+The spoken narration uses the browser's `speechSynthesis`, and browsers differ
+sharply on Linux: **Firefox exposes the system voices** through
+`speech-dispatcher` (`sudo apt install speech-dispatcher-espeak-ng`), while
+Chromium-based browsers commonly expose **none at all on the same machine**.
+
+The app checks rather than assumes. Where no voice exists the sound button is
+not shown — an inviting button that does nothing is worse than no button — and
+a line under the narration says so. Every spoken sentence is always on screen in
+large type regardless, so nothing is ever lost with the sound off.
 
 ## Deploying
 

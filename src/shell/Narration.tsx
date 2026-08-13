@@ -27,15 +27,15 @@ function pickVoice(languageTag: string): SpeechSynthesisVoice | undefined {
   )
 }
 
-interface Speech {
-  speak: (text: string) => void
-  cancel: () => void
-  /** A voice is installed and usable right now. */
-  hasVoice: boolean
-}
-
-export function useSpeech(): Speech {
-  const { locale } = useSettings()
+/**
+ * Whether this browser can actually speak, right now.
+ *
+ * Not a formality: on Linux, Firefox exposes the system voices through
+ * speech-dispatcher while Chromium-based browsers commonly expose none at all,
+ * on the very same machine. Every control that promises sound is gated on this,
+ * because a button that does nothing is worse than a button that is not there.
+ */
+export function useHasVoice(): boolean {
   const [voiceCount, setVoiceCount] = useState(
     () => globalThis.speechSynthesis?.getVoices().length ?? 0,
   )
@@ -50,6 +50,20 @@ export function useSpeech(): Speech {
     synth.addEventListener('voiceschanged', update)
     return () => synth.removeEventListener('voiceschanged', update)
   }, [])
+
+  return voiceCount > 0
+}
+
+interface Speech {
+  speak: (text: string) => void
+  cancel: () => void
+  /** A voice is installed and usable right now. */
+  hasVoice: boolean
+}
+
+export function useSpeech(): Speech {
+  const { locale } = useSettings()
+  const hasVoice = useHasVoice()
 
   const cancel = useCallback(() => {
     globalThis.speechSynthesis?.cancel()
@@ -74,7 +88,7 @@ export function useSpeech(): Speech {
     [locale],
   )
 
-  return { speak, cancel, hasVoice: voiceCount > 0 }
+  return { speak, cancel, hasVoice }
 }
 
 export function Narration({ text }: { text: string }) {
@@ -121,9 +135,11 @@ export function Narration({ text }: { text: string }) {
           </button>
         ) : null}
       </div>
-      {soundEnabled && !hasVoice ? (
+      {/* Said once, plainly, whether or not the child ever looked for the
+          sound button — which is now hidden on these devices. */}
+      {hasVoice ? null : (
         <p className="mt-1 text-center text-sm text-muted">{t('sound.unavailable')}</p>
-      ) : null}
+      )}
     </div>
   )
 }

@@ -1,22 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { diffractionBlur, geometricBlur } from '../physics/optics'
+import { blurRadii, type PinholeParams } from './blurScale'
 import { createWorldCanvas } from './sceneTexture'
 import fragmentSource from './shaders/pinhole.frag.glsl?raw'
 import vertexSource from './shaders/quad.vert.glsl?raw'
-
-export interface PinholeParams {
-  /** d, millimetres. */
-  holeDiameter: number
-  /** f, millimetres. */
-  boxLength: number
-  /** u, millimetres. */
-  objectDistance: number
-  /** Height of the back wall in millimetres — sets the scale of the blur. */
-  wallHeight: number
-  /** 0–1. The honest value is (d/d_max)²; 1 once the eye has adapted. */
-  exposure: number
-}
 
 interface Renderer {
   render: (params: PinholeParams) => void
@@ -44,7 +31,17 @@ function compile(gl: WebGL2RenderingContext, type: number, source: string): WebG
  * context exists but the program fails to compile — a black rectangle, and no
  * way back.
  */
+let shaderSupport: boolean | null = null
+
 function webgl2CanRunTheShader(): boolean {
+  // The answer cannot change within a session, and each ask costs a context —
+  // a resource the browser caps at about sixteen.
+  if (shaderSupport !== null) return shaderSupport
+  shaderSupport = probeShaderSupport()
+  return shaderSupport
+}
+
+function probeShaderSupport(): boolean {
   const probe = document.createElement('canvas')
   const gl = probe.getContext('webgl2')
   if (!gl) return false
@@ -67,16 +64,6 @@ function webgl2CanRunTheShader(): boolean {
   gl.getExtension('WEBGL_lose_context')?.loseContext()
 
   return linked
-}
-
-/** Physical blur radii expressed as a fraction of the wall — what the shader wants. */
-function radii(params: PinholeParams) {
-  const geometric =
-    geometricBlur(params.holeDiameter, params.boxLength, params.objectDistance) /
-    2 /
-    params.wallHeight
-  const diffraction = diffractionBlur(params.holeDiameter, params.boxLength) / 2 / params.wallHeight
-  return { geometric, diffraction }
 }
 
 function sizeCanvas(canvas: HTMLCanvasElement): { width: number; height: number } {
@@ -152,7 +139,7 @@ function createWebglRenderer(canvas: HTMLCanvasElement, world: HTMLCanvasElement
     render(params) {
       if (gl.isContextLost()) return
       const { width, height } = sizeCanvas(canvas)
-      const { geometric, diffraction } = radii(params)
+      const { geometric, diffraction } = blurRadii(params)
 
       // Enough samples to cover the blur disc without banding, never more than
       // the shader's ceiling. Beyond that the mip level takes over.
@@ -177,11 +164,21 @@ function createWebglRenderer(canvas: HTMLCanvasElement, world: HTMLCanvasElement
       gl.deleteProgram(program)
       gl.deleteTexture(texture)
       gl.deleteVertexArray(vao)
-      // Browsers cap live WebGL contexts (Chrome at 16) and evict the oldest
-      // when the cap is hit. Every chapter change remounts this component, so
-      // letting contexts linger until GC would eventually cost another chapter
-      // its picture.
-      gl.getExtension('WEBGL_lose_context')?.loseContext()
+      /*
+       * Deliberately NOT `WEBGL_lose_context.loseContext()`.
+       *
+       * A canvas hands out one context for its lifetime: `getContext` returns
+       * the same object forever, so a context lost on purpose is lost for
+       * good. React StrictMode mounts every effect twice in development —
+       * setup, cleanup, setup — which meant the second setup received the
+       * context the first one had just killed, and chapters 0 and 5 rendered
+       * black for the entire dev session while the production build looked
+       * fine. Whole classes of bug hide in that gap.
+       *
+       * The context-count concern this used to address is handled where it
+       * belongs: the `webglcontextlost` / `webglcontextrestored` pair below
+       * recovers if the browser evicts this context to stay under its cap.
+       */
     },
   }
 }
@@ -206,7 +203,7 @@ function createCanvas2dRenderer(
   return {
     render(params) {
       const { width, height } = sizeCanvas(canvas)
-      const { geometric, diffraction } = radii(params)
+      const { geometric, diffraction } = blurRadii(params)
       const blurPixels = Math.hypot(geometric, diffraction) * height
 
       context.setTransform(1, 0, 0, 1, 0, 0)
@@ -231,6 +228,8 @@ function createCanvas2dRenderer(
     },
   }
 }
+
+export type { PinholeParams }
 
 export interface PinholeCanvasProps extends PinholeParams {
   className?: string

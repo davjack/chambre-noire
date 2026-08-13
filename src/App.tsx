@@ -8,18 +8,19 @@ import { useHashRoute } from './shell/useHashRoute'
 function Router() {
   const [slug] = useHashRoute(FIRST_SLUG)
   const Chapter = chapterComponents[slug] ?? chapterComponents[FIRST_SLUG]
-  const isFirstView = useRef(true)
+  const previousSlug = useRef<string | null>(null)
 
   useEffect(() => {
     // Each chapter is a full screen of its own; arriving halfway down one that
     // scrolls would hide the picture the narration is talking about.
     globalThis.scrollTo({ top: 0 })
 
-    if (isFirstView.current) {
-      // Never steal focus on arrival — the visitor has not asked for anything yet.
-      isFirstView.current = false
-      return
-    }
+    // Comparing slugs rather than counting runs: StrictMode invokes this twice
+    // on mount, and a "first render" flag would report the second pass as a
+    // navigation and steal focus from a visitor who has not asked for anything.
+    const isNavigation = previousSlug.current !== null && previousSlug.current !== slug
+    previousSlug.current = slug
+    if (!isNavigation) return
 
     /*
      * Move focus into the new chapter.

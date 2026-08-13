@@ -11,7 +11,7 @@
   "sound.enable": "Écouter",
   "sound.disable": "Couper le son",
   "sound.replay": "Réécouter",
-  "sound.unavailable": "Pas de voix sur cet appareil. Le texte reste affiché.",
+  "sound.unavailable": "Pas de voix sur cet appareil. Tout est écrit en grand.",
 
   "lang.switch": "English",
 
@@ -40,7 +40,7 @@
   "chapter.no-hole.title": "Sans trou, pas d'image",
   "chapter.no-hole.say": "Ouvre grand la fenêtre. Regarde le mur.",
   "chapter.no-hole.say.wide": "Chaque point envoie sa lumière partout. Plus d'image !",
-  "chapter.no-hole.say.narrow": "Plus la fenêtre est petite, plus on voit quelque chose.",
+  "chapter.no-hole.say.narrow": "Plus la fenêtre est petite, mieux on voit.",
   "chapter.no-hole.window": "Taille de la fenêtre",
 
   "chapter.the-hole.title": "Le petit trou range la lumière",
@@ -55,14 +55,14 @@
   "chapter.upside-down.say": "Monte le bonhomme. Son image descend.",
   "chapter.upside-down.say.crossed": "Les rayons se croisent dans le trou. Voilà pourquoi.",
   "chapter.upside-down.height": "Hauteur du bonhomme",
-  "chapter.upside-down.sideView": "Vu de côté : haut et bas sont échangés",
-  "chapter.upside-down.topView": "Vu de dessus : gauche et droite aussi",
+  "chapter.upside-down.sideView": "Vu de côté : le haut passe en bas",
+  "chapter.upside-down.topView": "Vu de dessus : la gauche passe à droite",
 
   "chapter.hole-size.title": "Grand trou ou petit trou ?",
   "chapter.hole-size.say": "Change la taille du trou. Regarde l'image.",
   "chapter.hole-size.say.big": "Grand trou : c'est bien clair, mais tout flou.",
   "chapter.hole-size.say.best": "Là, c'est le plus net possible !",
-  "chapter.hole-size.say.small": "Trop petit : la lumière s'étale et ça refloute.",
+  "chapter.hole-size.say.small": "Trop petit : la lumière s'étale, et ça redevient flou.",
   "chapter.hole-size.hole": "Taille du trou",
   "chapter.hole-size.darkAdapt": "Yeux habitués au noir",
   "chapter.hole-size.darkAdaptHelp": "Comme quand tu restes longtemps dans le noir.",
@@ -82,11 +82,11 @@
   "chapter.your-eye.brain": "Ton cerveau remet l'image à l'endroit. Tout seul.",
 
   "chapter.sun-spots.title": "Les taches de soleil",
-  "chapter.sun-spots.say": "Regarde par terre, sous l'arbre.",
+  "chapter.sun-spots.say": "Chaque tache par terre est une image du Soleil.",
   "chapter.sun-spots.say.eclipse": "La Lune mord le Soleil. Les taches deviennent des croissants !",
   "chapter.sun-spots.eclipse": "La Lune passe devant le Soleil",
-  "chapter.sun-spots.leaves": "Entre les feuilles, plein de petits trous.",
-  "chapter.sun-spots.ground": "par terre",
+  "chapter.sun-spots.oneHole": "Un trou = une image du Soleil",
+  "chapter.sun-spots.leaves": "Plein de trous, plein d'images",
 
   "chapter.build-it.title": "Fabrique la tienne",
   "chapter.build-it.say": "Il te faut une boîte, du papier et une aiguille.",
@@ -104,5 +104,5 @@
   "chapter.build-it.step.5": "Ferme la boîte. Scotche partout : aucune lumière ne passe !",
   "chapter.build-it.step.6": "Dehors, tourne le trou vers une maison. Regarde le calque.",
   "chapter.build-it.tip": "Astuce : mets un tissu sur ta tête. Il fait encore plus noir.",
-  "chapter.build-it.grownup": "Pour l'adulte : les ciseaux et l'aiguille, c'est toi."
+  "chapter.build-it.grownup": "Adulte : c'est toi qui découpes et qui piques le trou."
 }

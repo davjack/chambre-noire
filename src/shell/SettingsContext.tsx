@@ -10,29 +10,7 @@ import {
 } from 'react'
 
 import { DEFAULT_LOCALE, isLocale, resolveLocale, type Locale } from '../i18n'
-
-const STORAGE_PREFIX = 'petit-trou:'
-
-/**
- * localStorage throws in Safari private mode and is simply absent in some
- * kiosk browsers. Progress is a convenience here, never a requirement, so both
- * failures degrade to "this session only" instead of breaking the app.
- */
-function readStored(key: string): string | null {
-  try {
-    return globalThis.localStorage?.getItem(STORAGE_PREFIX + key) ?? null
-  } catch {
-    return null
-  }
-}
-
-function writeStored(key: string, value: string): void {
-  try {
-    globalThis.localStorage?.setItem(STORAGE_PREFIX + key, value)
-  } catch {
-    // Storage unavailable — the session still works, it just won't be remembered.
-  }
-}
+import { parseVisited, readStored, writeStored } from './storage'
 
 function subscribeToMedia(query: string) {
   return (onChange: () => void) => {
@@ -64,17 +42,6 @@ export interface Settings {
 
 const SettingsContext = createContext<Settings | null>(null)
 
-function readVisited(): Set<string> {
-  const raw = readStored('visited')
-  if (!raw) return new Set()
-  try {
-    const parsed: unknown = JSON.parse(raw)
-    return new Set(Array.isArray(parsed) ? parsed.filter((v) => typeof v === 'string') : [])
-  } catch {
-    return new Set()
-  }
-}
-
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(() => {
     const stored = readStored('locale')
@@ -86,7 +53,9 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     () => readStored('sound') === 'on',
   )
 
-  const [visited, setVisited] = useState<ReadonlySet<string>>(readVisited)
+  const [visited, setVisited] = useState<ReadonlySet<string>>(() =>
+    parseVisited(readStored('visited')),
+  )
 
   const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
 

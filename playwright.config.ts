@@ -1,7 +1,9 @@
 import { defineConfig } from '@playwright/test'
 
 const PORT = 4173
+const DEV_PORT = 5174
 const baseURL = `http://127.0.0.1:${PORT}`
+const devURL = `http://127.0.0.1:${DEV_PORT}`
 
 export default defineConfig({
   testDir: './e2e',
@@ -34,14 +36,41 @@ export default defineConfig({
         isMobile: true,
       },
     },
+    /*
+     * The same app served by `npm run dev`, where React StrictMode mounts every
+     * effect twice.
+     *
+     * This project exists because a real bug lived in that gap and nothing
+     * caught it: disposing the WebGL context on cleanup meant the second mount
+     * inherited a dead context, so chapters 0 and 5 rendered black for a whole
+     * development session while the production build — all this suite tested —
+     * was perfect.
+     */
+    {
+      name: 'dev-strict-mode',
+      testMatch: /canvas\.spec\.ts/,
+      use: {
+        browserName: 'chromium',
+        viewport: { width: 1280, height: 800 },
+        baseURL: devURL,
+      },
+    },
   ],
-  webServer: {
-    // `--host 127.0.0.1` is not cosmetic: vite preview otherwise binds the
-    // `localhost` alias, which can resolve to ::1 while Playwright probes the
-    // IPv4 address and waits for a server that is already up.
-    command: `npm run build && npm run preview -- --port ${PORT} --strictPort --host 127.0.0.1`,
-    url: baseURL,
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-  },
+  webServer: [
+    {
+      // `--host 127.0.0.1` is not cosmetic: vite preview otherwise binds the
+      // `localhost` alias, which can resolve to ::1 while Playwright probes the
+      // IPv4 address and waits for a server that is already up.
+      command: `npm run build && npm run preview -- --port ${PORT} --strictPort --host 127.0.0.1`,
+      url: baseURL,
+      reuseExistingServer: !process.env.CI,
+      timeout: 120_000,
+    },
+    {
+      command: `npm run dev -- --port ${DEV_PORT} --strictPort --host 127.0.0.1`,
+      url: devURL,
+      reuseExistingServer: !process.env.CI,
+      timeout: 120_000,
+    },
+  ],
 })

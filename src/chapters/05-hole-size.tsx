@@ -9,6 +9,7 @@ import {
   type PinholeSetup,
 } from '../physics/optics'
 import { BigSlider } from '../shell/BigSlider'
+import { logScale } from '../shell/logScale'
 import { ChapterShell } from '../shell/ChapterShell'
 import { Meter } from '../shell/Meter'
 
@@ -32,9 +33,7 @@ const WALL_HEIGHT_MM = 80
 const MIN_HOLE_MM = 0.05
 const MAX_HOLE_MM = 5
 
-const holeFromSlider = (t: number) => MIN_HOLE_MM * (MAX_HOLE_MM / MIN_HOLE_MM) ** t
-const sliderFromHole = (d: number) =>
-  Math.log(d / MIN_HOLE_MM) / Math.log(MAX_HOLE_MM / MIN_HOLE_MM)
+const holeScale = logScale(MIN_HOLE_MM, MAX_HOLE_MM)
 
 export function HoleSizeChapter() {
   const t = useT()
@@ -50,7 +49,7 @@ export function HoleSizeChapter() {
   const [darkAdapted, setDarkAdapted] = useState(true)
   const [usingFallback, setUsingFallback] = useState(false)
 
-  const holeDiameter = holeFromSlider(slider)
+  const holeDiameter = holeScale.toValue(slider)
   const setup: PinholeSetup = {
     boxLength: BOX_LENGTH_MM,
     objectDistance: OBJECT_DISTANCE_MM,
@@ -86,7 +85,7 @@ export function HoleSizeChapter() {
             step={0.005}
             onChange={setSlider}
             valueText={t('unit.mm', { value: holeDiameter.toFixed(2) })}
-            markAt={sliderFromHole(optimum)}
+            markAt={holeScale.toSlider(optimum)}
             markLabel={t('chapter.hole-size.sweetSpot')}
           />
           <div className="flex flex-col gap-2">

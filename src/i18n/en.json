@@ -11,7 +11,7 @@
   "sound.enable": "Listen",
   "sound.disable": "Sound off",
   "sound.replay": "Play again",
-  "sound.unavailable": "No voice on this device. The words stay on screen.",
+  "sound.unavailable": "No voice on this device. Everything is written in large type.",
 
   "lang.switch": "Français",
 
@@ -40,7 +40,7 @@
   "chapter.no-hole.title": "No hole, no picture",
   "chapter.no-hole.say": "Open the window wide. Look at the wall.",
   "chapter.no-hole.say.wide": "Every point sends light everywhere. No picture left!",
-  "chapter.no-hole.say.narrow": "The smaller the window, the more you can see.",
+  "chapter.no-hole.say.narrow": "The smaller the window, the better you can see.",
   "chapter.no-hole.window": "Window size",
 
   "chapter.the-hole.title": "The little hole sorts the light",
@@ -55,14 +55,14 @@
   "chapter.upside-down.say": "Lift the little person. The picture goes down.",
   "chapter.upside-down.say.crossed": "The rays cross inside the hole. That's why.",
   "chapter.upside-down.height": "How high they stand",
-  "chapter.upside-down.sideView": "From the side: top and bottom swap",
-  "chapter.upside-down.topView": "From above: left and right swap too",
+  "chapter.upside-down.sideView": "From the side: the top goes to the bottom",
+  "chapter.upside-down.topView": "From above: the left goes to the right",
 
   "chapter.hole-size.title": "Big hole or little hole?",
   "chapter.hole-size.say": "Change the size of the hole. Watch the picture.",
   "chapter.hole-size.say.big": "Big hole: nice and bright, but all blurry.",
   "chapter.hole-size.say.best": "There! That's as sharp as it can be.",
-  "chapter.hole-size.say.small": "Too tiny: the light spreads out and blurs again.",
+  "chapter.hole-size.say.small": "Too tiny: the light spreads out and it blurs again.",
   "chapter.hole-size.hole": "Hole size",
   "chapter.hole-size.darkAdapt": "Eyes used to the dark",
   "chapter.hole-size.darkAdaptHelp": "Like when you stay in the dark for a while.",
@@ -82,11 +82,11 @@
   "chapter.your-eye.brain": "Your brain turns the picture the right way up. All by itself.",
 
   "chapter.sun-spots.title": "Sun spots on the ground",
-  "chapter.sun-spots.say": "Look at the ground, under the tree.",
+  "chapter.sun-spots.say": "Every bright patch on the ground is a picture of the Sun.",
   "chapter.sun-spots.say.eclipse": "The Moon bites the Sun. The spots turn into crescents!",
   "chapter.sun-spots.eclipse": "The Moon moves in front of the Sun",
-  "chapter.sun-spots.leaves": "Between the leaves: lots of little holes.",
-  "chapter.sun-spots.ground": "on the ground",
+  "chapter.sun-spots.oneHole": "One hole = one picture of the Sun",
+  "chapter.sun-spots.leaves": "Many holes, many pictures",
 
   "chapter.build-it.title": "Build your own",
   "chapter.build-it.say": "You need a box, some paper and a needle.",
@@ -104,5 +104,5 @@
   "chapter.build-it.step.5": "Close the box. Tape every edge: no light gets in!",
   "chapter.build-it.step.6": "Go outside, point the hole at a house. Watch the paper.",
   "chapter.build-it.tip": "Tip: put a cloth over your head. It gets even darker.",
-  "chapter.build-it.grownup": "For the grown-up: the scissors and the needle are your job."
+  "chapter.build-it.grownup": "Grown-up: you do the cutting and the pricking."
 }

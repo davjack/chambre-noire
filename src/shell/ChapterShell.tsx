@@ -2,7 +2,7 @@ import { useEffect, type ReactNode } from 'react'
 
 import { chapterIndex, chapterOrder } from '../chapters/order'
 import { useT } from '../i18n/useT'
-import { Narration } from './Narration'
+import { Narration, useHasVoice } from './Narration'
 import { useSettings } from './SettingsContext'
 import { useHashRoute } from './useHashRoute'
 
@@ -20,6 +20,7 @@ export function ChapterShell({ slug, narration, children, controls }: ChapterShe
   const t = useT()
   const { markVisited, visited, soundEnabled, setSoundEnabled, locale, setLocale } = useSettings()
   const [, navigate] = useHashRoute(slug)
+  const hasVoice = useHasVoice()
 
   const index = chapterIndex(slug)
   const previous = index > 0 ? chapterOrder[index - 1] : undefined
@@ -52,16 +53,22 @@ export function ChapterShell({ slug, narration, children, controls }: ChapterShe
       <header className="flex items-center justify-between gap-3 px-4 pt-3">
         <p className="text-sm font-bold uppercase tracking-wider text-muted">{t('app.title')}</p>
         <div className="flex items-center gap-2">
-          {/* No `aria-pressed`: the label already says what the next press
+          {/* Offered only where a voice exists. Chromium on Linux reports none
+              at all, and the button used to sit there inviting a six-year-old
+              to press it for nothing.
+
+              No `aria-pressed`: the label already says what the next press
               does. Carrying both makes a screen reader announce "Sound off,
               toggle button, pressed", which states the opposite of the truth. */}
-          <button
-            type="button"
-            className="pill !min-h-11 !px-4 text-sm"
-            onClick={() => setSoundEnabled(!soundEnabled)}
-          >
-            {soundEnabled ? t('sound.disable') : t('sound.enable')}
-          </button>
+          {hasVoice ? (
+            <button
+              type="button"
+              className="pill !min-h-11 !px-4 text-sm"
+              onClick={() => setSoundEnabled(!soundEnabled)}
+            >
+              {soundEnabled ? t('sound.disable') : t('sound.enable')}
+            </button>
+          ) : null}
           {/* No `aria-label` either: it read "Passer en anglais" over a button
               labelled "English", so voice control could not act on what it saw
               — WCAG 2.5.3 Label in Name. The visible word is the better name. */}
