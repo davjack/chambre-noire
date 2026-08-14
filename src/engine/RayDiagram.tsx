@@ -427,9 +427,9 @@ export function ProjectedFigure({
   return (
     <>
       <defs>
-        {/* The default filter region is 120 % of the bounding box, which cuts a
-            blur this wide off square — a rectangle with corners, drawn on the
-            chapter about light having no edges. */}
+        {/* The default filter region is 120 % of the bounding box, and a blur
+            this wide runs well past it: cropped there, a smear that should fade
+            out ends in four straight edges and a corner. */}
         <filter id={filterId} x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur stdDeviation={blur / 4} />
         </filter>
