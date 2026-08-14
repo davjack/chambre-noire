@@ -76,12 +76,39 @@ now a two-metre chamber, at 0.16 %. That is not a thumb on the scale: it is the
 reason a walk-in camera obscura is sharper than a shoebox, and it is the object
 this app is named after.
 
-**Open objection:** chapter 5 still models a 10 cm box, so the sharpest picture
-it can reach stays four times softer than the one on the opening screen. A child
-who noticed would be noticing something true, and chapter 6 is where the size of
-the box stops being invisible. *Would win* if chapter 5 ever claimed its sweet
-spot were the sharpest picture possible, rather than the sharpest that box can
-make.
+**The objection this left open, and how it was settled.** Chapter 5 still models
+a 10 cm box, so the sharpest picture it can reach stays several times softer than
+the opening screen — and a reader did notice, and read it as the old blurry
+texture having survived on that chapter. It had not; measured on the live site,
+the ramp of the horizon edge came to 0.152 % of the picture height on chapter 0
+against 0.555 % on chapter 5 *at its sweet spot* — but 1.377 % where the slider
+actually opened, which is what was being looked at.
+
+The second number was the answer. The slider used to start at 0.75 of its track,
+a 1.58 mm hole against an optimum of 0.36, so the chapter opened on a smear nine
+times softer than chapter 0 and read as a fault rather than as the wide end of a
+trade. It now opens on the optimum, which is where the mark on the track already
+pointed: 0.555 %, and the line read aloud on arrival says "Là, c'est le plus net
+possible !"
+
+The first number cannot be answered. At the best hole the relative blur is
+`2.21·√(λf) / wall`, which with a fixed wall-to-box ratio is `2.76·√λ / √f`: the
+only lever is a bigger box, and it pays as a square root. Matching chapter 0
+would take **f × 16.8, a 1.7 m chamber** — and chapter 5 is deliberately a box
+you can hold, which chapter 6 (60 to 190 mm), chapter 8 and chapter 9 all depend
+on. Asked to choose, the reader chose coherence. The residual gap is the physics,
+and it is what chapter 6 exists to teach.
+
+*Rejected on the way:* growing chapter 5 to a shoebox's 300 mm — 1.4× for a box
+that would then sit outside its own neighbour's range; and raising the wall
+without the box, which works arithmetically and would put the field of view at
+100° with nothing on screen to say so.
+
+**Still open, and not a sharpness problem:** the box that is modelled and the box
+that is prescribed are not the same object. Chapter 9 has the child build a
+shoebox, about 300 mm along the axis; chapter 6 stops at 190 and chapter 5 models
+100. *Would win* its own change the day someone measures what a child's box
+actually does against what these chapters predict.
 
 ## Deliberately absent dependencies
 

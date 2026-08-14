@@ -35,9 +35,29 @@ const MAX_HOLE_MM = 5
 
 const holeScale = logScale(MIN_HOLE_MM, MAX_HOLE_MM)
 
+/**
+ * Where the slider starts: on the best hole this box has, which is also where
+ * the mark on the track already points.
+ *
+ * It used to start at 0.75 of the track — a 1.58 mm hole against an optimum of
+ * 0.36 — so the chapter opened on a smear, nine times softer than the opening
+ * screen, and read as a rendering fault rather than as the wide end of a trade.
+ * From here the child finds *both* ways to spoil it instead of one, and the line
+ * read aloud on arrival says what this box can actually do: "Là, c'est le plus
+ * net possible !"
+ *
+ * `holeDiameter` is passed only because `PinholeSetup` asks for one; the optimum
+ * is a property of the box and the distance, never of the hole currently set.
+ */
+const OPTIMUM_MM = optimalHoleDiameterFor({
+  boxLength: BOX_LENGTH_MM,
+  objectDistance: OBJECT_DISTANCE_MM,
+  holeDiameter: MIN_HOLE_MM,
+})
+
 export function HoleSizeChapter() {
   const t = useT()
-  const [slider, setSlider] = useState(0.75)
+  const [slider, setSlider] = useState(holeScale.toSlider(OPTIMUM_MM))
   /*
    * On by default, and that is the realistic setting, not the forgiving one:
    * someone standing inside a camera obscura *does* adapt, and sees the image
