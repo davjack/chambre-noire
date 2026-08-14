@@ -1,6 +1,15 @@
 import { useState } from 'react'
 
-import { BackWall, Box, CentreRay, Figure, LANDMARKS, MARK_COLOURS, Scene } from '../engine/RayDiagram'
+import {
+  BackWall,
+  Box,
+  CentreRay,
+  Figure,
+  LANDMARKS,
+  MARK_COLOURS,
+  ProjectedFigure,
+  Scene,
+} from '../engine/RayDiagram'
 import { createGeometry } from '../engine/geometry'
 import { useT } from '../i18n/useT'
 import { relativeBrightness } from '../physics/optics'
@@ -76,12 +85,9 @@ export function BoxLengthChapter() {
 
           {/* The image itself: the same figure, upside down, dimmed by the
               light it actually receives. */}
-          <Figure
+          <ProjectedFigure
             geometry={geometry}
-            sceneX={geometry.boxLength}
-            centreY={0}
-            height={geometry.imageHeight(FIGURE_HEIGHT)}
-            flipped
+            height={FIGURE_HEIGHT}
             opacity={0.35 + relative * 0.65}
           />
         </Box>

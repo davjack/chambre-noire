@@ -1,6 +1,15 @@
 import { useState } from 'react'
 
-import { BackWall, Beam, Box, Figure, LANDMARKS, MARK_COLOURS, Scene } from '../engine/RayDiagram'
+import {
+  BackWall,
+  Beam,
+  Box,
+  Figure,
+  LANDMARKS,
+  MARK_COLOURS,
+  ProjectedFigure,
+  Scene,
+} from '../engine/RayDiagram'
 import { createGeometry } from '../engine/geometry'
 import { useT } from '../i18n/useT'
 import { BigSlider } from '../shell/BigSlider'
@@ -87,6 +96,16 @@ export function NoHoleChapter() {
               />
             ))}
           </g>
+
+          {/* The picture that is not there. Every point of him is spread over a
+              band taller than he is, so `ProjectedFigure` fades him to nothing
+              — and he only starts coming back as the window closes, which is
+              exactly what the third line of narration promises. */}
+          <ProjectedFigure
+            geometry={geometry}
+            height={FIGURE_HEIGHT}
+            blur={geometry.band(0).height}
+          />
         </Box>
         <Figure geometry={geometry} centreY={0} height={FIGURE_HEIGHT} />
       </Scene>

@@ -1,6 +1,14 @@
 import { useState } from 'react'
 
-import { Beam, Figure, LANDMARKS, MARK_COLOURS, Mark, Scene, SceneLabel } from '../engine/RayDiagram'
+import {
+  Beam,
+  Figure,
+  LANDMARKS,
+  MARK_COLOURS,
+  ProjectedFigure,
+  Scene,
+  SceneLabel,
+} from '../engine/RayDiagram'
 import { createGeometry } from '../engine/geometry'
 import { useT } from '../i18n/useT'
 import { BigSlider } from '../shell/BigSlider'
@@ -117,20 +125,17 @@ export function YourEyeChapter() {
           fill="var(--color-mark-b)"
         />
 
-        {LANDMARKS.map((landmark) => {
-          const y = geometry.landing(landmark.offset * FIGURE_HEIGHT, 0)
-          const point = geometry.toSvg({ x: geometry.boxLength, y })
-          return (
-            <Mark
-              key={landmark.key}
-              x={point.x}
-              y={point.y}
-              colour={MARK_COLOURS[landmark.key]}
-              shape={landmark.shape}
-              size={9}
-            />
-          )
-        })}
+        {/* The picture at the back of the eye — upside down, like every other
+            picture in this app.
+
+            Drawn sharp whatever the pupil is doing, and that is not an
+            oversight: an eye is not a pinhole, it has a lens, and opening the
+            pupil in a dark room lets more of the world in without smearing it.
+            Blurring this the way chapters two and three blur theirs would teach
+            a six-year-old that the dark makes them short-sighted. */}
+        <g clipPath="url(#eye-chamber)">
+          <ProjectedFigure geometry={geometry} height={FIGURE_HEIGHT} />
+        </g>
 
         <Figure geometry={geometry} centreY={0} height={FIGURE_HEIGHT} />
 

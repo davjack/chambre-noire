@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import { geometricBlur } from '../physics/optics'
-import { AXIS_Y, HOLE_X, bandHeightMatchesBlur, createGeometry } from './geometry'
+import { geometricBlur, imageHeight, projectPoint } from '../physics/optics'
+import { AXIS_Y, HOLE_X, bandHeightMatchesBlur, createGeometry, imagePlacement } from './geometry'
 
 const geometry = createGeometry({
   objectDistance: 440,
@@ -43,6 +43,27 @@ describe('scene geometry', () => {
     const wide = createGeometry({ objectDistance: 440, boxLength: 300, apertureDiameter: 90 })
     const { top, bottom, centre } = wide.band(-80)
     expect((top + bottom) / 2).toBeCloseTo(centre, 10)
+  })
+
+  it('projects the image to the other side of the axis, at the magnified size', () => {
+    const placement = imagePlacement(geometry, 100, 200)
+
+    expect(placement.centreY).toBeCloseTo(projectPoint({ x: -440, y: 100 }, 300).y, 10)
+    expect(placement.centreY).toBeLessThan(0)
+    expect(placement.height).toBeCloseTo(imageHeight(200, 300, 440), 10)
+  })
+
+  it('sends every point of a figure to the mirrored point of its image', () => {
+    // A chapter draws the image from its centre and its height alone. That has
+    // to land each part of the figure exactly where projecting it on its own
+    // would — otherwise the picture on the wall and the rays reaching it are
+    // two different claims about the same box.
+    const placement = imagePlacement(geometry, 40, 250)
+
+    for (const offset of [-0.45, -0.1, 0, 0.32, 0.45]) {
+      const drawnFromTheCentre = placement.centreY - offset * placement.height
+      expect(drawnFromTheCentre).toBeCloseTo(geometry.landing(40 + offset * 250, 0), 10)
+    }
   })
 
   it('grows the image with the box length', () => {

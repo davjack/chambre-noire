@@ -201,6 +201,47 @@ can be executed cleanly in code.
 **Open objection:** a warm, picture-book look would suit the audience better.
 That needs an illustrator and an asset pipeline.
 
+## The picture on the wall, in every diagram that has a box
+
+Five chapters put the little person in front of a box. Until now exactly one of
+them — *Boîte courte ou longue* — drew his picture inside it; the others put
+three coloured shapes on the wall and left the child to work out that the shapes
+were him. That is the one inference this app exists to spare them, and a reader
+said so: *son image projetée n'est presque jamais représentée sur l'écran dans
+la boîte*.
+
+`ProjectedFigure` now draws it everywhere, from `imagePlacement`, so the picture
+and the rays reaching it are one claim about one box rather than two. Where the
+shapes used to be drawn separately they were removed: the figure carries its own
+three landmarks, at exactly the points the separate ones occupied.
+
+**It is blurred where the aperture is what the child is moving** — chapters 2 and
+3 — by the height of the band one point of the object paints, spelled as a
+Gaussian of a quarter of that (the standard deviation of a uniform disc of that
+diameter). And it fades to nothing once that band is taller than the picture is,
+which is what keeps chapter 2 honest: at the wide end there is no picture and
+none is drawn, and the figure only surfaces as the window closes — which is what
+that chapter's third narrated line has always promised and never showed.
+
+**It is not blurred in *Ton œil est une boîte noire*.** An eye has a lens. A
+wide pupil in a dark room lets more of the world in without smearing it, and
+blurring the retina the way chapters 2 and 3 blur their walls would teach a
+six-year-old that the dark makes them short-sighted.
+
+**Open objection, and it is the real one:** in a side cutaway the back wall is
+seen edge on, and a picture painted on it is a band, not a figure. *Comment
+marche ta boîte* refuses that lie explicitly — it draws the eclipse as a lit
+strip in the cutaway and puts the crescent in a second panel, face on, because
+there the *shape* of the picture is the entire lesson. Here the lesson is where
+the picture lands and how big it is, both of which survive being drawn face on,
+and the recognisable little person is what carries it to a six-year-old. *Would
+win* on any chapter whose point becomes the shape of the image — that chapter
+needs chapter 8's second panel, not this.
+
+The chamber runs 40 units past the back wall rather than 18, because a figure
+has arms: they reach 0.19 of its height either side, and the old margin cut one
+of them off flush at the longest box chapter 6 offers.
+
 ## Colour and contrast
 
 The palette is Okabe–Ito, readable with every common form of colour blindness,

@@ -97,6 +97,34 @@ export function createGeometry({
   }
 }
 
+/** Where the image of an object lands on the wall: its centre and its height. */
+export interface ImagePlacement {
+  /** Scene y of the middle of the image — on the far side of the axis. */
+  centreY: number
+  /** Its height, in scene units. */
+  height: number
+}
+
+/**
+ * The picture the box makes of an object `height` tall centred at `centreY`.
+ *
+ * Two lines of arithmetic, named, because a chapter that draws the image has to
+ * derive both numbers from the same projection the rays are drawn with. Written
+ * out at each call site, the day one of them keeps the sign of `centreY` the
+ * diagram still looks entirely plausible — and teaches the opposite of the
+ * chapter it is on.
+ */
+export function imagePlacement(
+  geometry: SceneGeometry,
+  centreY: number,
+  height: number,
+): ImagePlacement {
+  return {
+    centreY: geometry.landing(centreY, 0),
+    height: geometry.imageHeight(height),
+  }
+}
+
 /**
  * The lit band and the geometric blur are the same quantity seen twice. Exposed
  * so the unit tests can hold the drawing to the physics.

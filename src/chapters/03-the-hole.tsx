@@ -8,6 +8,7 @@ import {
   LANDMARKS,
   MARK_COLOURS,
   Mark,
+  ProjectedFigure,
   Scene,
 } from '../engine/RayDiagram'
 import { createGeometry } from '../engine/geometry'
@@ -85,32 +86,30 @@ export function TheHoleChapter() {
             ))}
           </g>
 
+          {/* Him, on the wall: smeared into nothing while the window is open,
+              and back together once the hole has sorted the light. He carries
+              the three landmarks himself, so nothing is drawn twice. */}
+          <ProjectedFigure
+            geometry={geometry}
+            height={FIGURE_HEIGHT}
+            blur={geometry.band(0).height}
+          />
+
           {/* What each point of the object paints on the wall: a band exactly
               `geometricBlur` tall, collapsing to a dot as the hole closes. */}
           {LANDMARKS.map((landmark) => {
             const band = geometry.band(landmark.offset * FIGURE_HEIGHT)
             const top = geometry.toSvg({ x: geometry.boxLength, y: band.top })
-            const centre = geometry.toSvg({ x: geometry.boxLength, y: band.centre })
             return (
-              <g key={landmark.key}>
-                <rect
-                  x={geometry.wallX}
-                  y={top.y}
-                  width={16}
-                  height={Math.max(2, band.height)}
-                  fill={MARK_COLOURS[landmark.key]}
-                  opacity={sorted ? 0.35 : 0.8}
-                />
-                {sorted ? (
-                  <Mark
-                    x={geometry.wallX + 8}
-                    y={centre.y}
-                    colour={MARK_COLOURS[landmark.key]}
-                    shape={landmark.shape}
-                    size={11}
-                  />
-                ) : null}
-              </g>
+              <rect
+                key={landmark.key}
+                x={geometry.wallX}
+                y={top.y}
+                width={16}
+                height={Math.max(2, band.height)}
+                fill={MARK_COLOURS[landmark.key]}
+                opacity={sorted ? 0.35 : 0.8}
+              />
             )
           })}
         </Box>

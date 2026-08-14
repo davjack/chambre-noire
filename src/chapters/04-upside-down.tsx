@@ -8,6 +8,7 @@ import {
   LANDMARKS,
   MARK_COLOURS,
   Mark,
+  ProjectedFigure,
   Scene,
   SceneLabel,
 } from '../engine/RayDiagram'
@@ -82,20 +83,9 @@ export function UpsideDownChapter() {
               colour={MARK_COLOURS[landmark.key]}
             />
           ))}
-          {LANDMARKS.map((landmark) => {
-            const y = side.landing(lift + landmark.offset * FIGURE_HEIGHT, 0)
-            const point = side.toSvg({ x: side.boxLength, y })
-            return (
-              <Mark
-                key={landmark.key}
-                x={point.x + 8}
-                y={point.y}
-                colour={MARK_COLOURS[landmark.key]}
-                shape={landmark.shape}
-                size={9}
-              />
-            )
-          })}
+          {/* The picture on the wall, carrying its own three landmarks: lift the
+              bonhomme and the whole of him goes down, not three dots. */}
+          <ProjectedFigure geometry={side} centreY={lift} height={FIGURE_HEIGHT} />
         </Box>
         <Figure geometry={side} centreY={lift} height={FIGURE_HEIGHT} />
 
