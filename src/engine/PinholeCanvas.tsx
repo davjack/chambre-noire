@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { blurRadii, type PinholeParams } from './blurScale'
-import { createWorldCanvas } from './sceneTexture'
+import { createWorldCanvas, worldTextureWidth } from './sceneTexture'
 import fragmentSource from './shaders/pinhole.frag.glsl?raw'
 import vertexSource from './shaders/quad.vert.glsl?raw'
 
@@ -253,7 +253,17 @@ export function PinholeCanvas({ className, onFallback, ...params }: PinholeCanva
     const canvas = canvasRef.current
     if (!canvas) return
 
-    const world = createWorldCanvas()
+    /*
+     * Drawn at the resolution this canvas will actually show, so the only
+     * softness left in the picture is the one the optics put there.
+     *
+     * Measured once, not tracked: a window that grows past the texture only
+     * gets back some of the bilinear softness this removes, and leaving the
+     * chapter and coming back redraws it. Watching the resize would mean
+     * rebuilding the renderer from the ResizeObserver, which is the exact
+     * thing the observer below is careful not to do.
+     */
+    const world = createWorldCanvas(worldTextureWidth(sizeCanvas(canvas).width))
     const canUseShader = webgl2CanRunTheShader()
     const renderer = canUseShader
       ? createWebglRenderer(canvas, world)

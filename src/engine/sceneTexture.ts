@@ -76,11 +76,41 @@ export function drawWorld(
   }
 }
 
+/** The largest texture every WebGL2 device is guaranteed to accept. */
+const MAX_WORLD_WIDTH = 2048
+/** Enough for a phone, and the floor when the canvas cannot be measured yet. */
+const MIN_WORLD_WIDTH = 1024
+
+/**
+ * How wide to draw the world, for a canvas this wide in device pixels.
+ *
+ * The picture is magnified to fill the whole wall, so a texture narrower than
+ * the canvas adds a bilinear ramp to every edge — softness on top of the blur
+ * the optics actually justify, and indistinguishable from it by eye. At 640
+ * texels, which is what this used to be, a 1244-pixel canvas magnified every
+ * texel 1.94 times and about a third of the visible softness was this rather
+ * than physics.
+ *
+ * Two tiers rather than a size fitted to the canvas: 2048 is the floor the
+ * OpenGL ES 3.0 spec puts under MAX_TEXTURE_SIZE, so it needs no runtime query
+ * and no fallback path, and a 400-pixel phone should not pay the 12.6 MB it
+ * costs to hold texels it cannot show.
+ */
+export function worldTextureWidth(canvasWidth: number): number {
+  return canvasWidth > MIN_WORLD_WIDTH ? MAX_WORLD_WIDTH : MIN_WORLD_WIDTH
+}
+
 /**
  * Renders the world once into an offscreen canvas, ready to be uploaded as a
  * texture or blitted by the 2D fallback.
+ *
+ * The height follows the width, because every chapter that shows this picture
+ * frames it 4:3 and a texture of another shape would stretch it.
  */
-export function createWorldCanvas(width = 640, height = 480): HTMLCanvasElement {
+export function createWorldCanvas(
+  width = MIN_WORLD_WIDTH,
+  height = (width * 3) / 4,
+): HTMLCanvasElement {
   const canvas = document.createElement('canvas')
   canvas.width = width
   canvas.height = height

@@ -13,9 +13,28 @@ import { ChapterShell } from '../shell/ChapterShell'
  * meets the honest thing first and spends the next nine chapters taking it
  * apart.
  */
-const BOX_LENGTH_MM = 110
-const OBJECT_DISTANCE_MM = 8000
-const WALL_HEIGHT_MM = 85
+/*
+ * A room, not a shoebox — the chamber this app is named after.
+ *
+ * The shader maps the whole scene onto the whole wall whatever these numbers
+ * say, so they set exactly two things: how blurred the picture is, and how much
+ * light reaches the wall. Scaling the box and the wall together therefore keeps
+ * the framing and divides the relative blur by the square root of the factor.
+ * That is not a trick to make the picture look better: a two-metre camera
+ * obscura really is four times sharper than an eleven-centimetre one, for the
+ * same reason a longer box needs a bigger hole.
+ *
+ * Here the total blur comes to 0.16 % of the wall's height, against 0.64 % for
+ * the small box this screen used to model — sharp, rather than slightly out of
+ * focus with nothing on screen to explain why.
+ *
+ * The box the child will build is modelled elsewhere on purpose. Chapter 5 runs
+ * a 10 cm one, where the softness at the best possible hole *is* the lesson
+ * instead of a disappointment on the opening screen.
+ */
+const BOX_LENGTH_MM = 2000
+const OBJECT_DISTANCE_MM = 30_000
+const WALL_HEIGHT_MM = 1500
 
 export function WowChapter() {
   const t = useT()

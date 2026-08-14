@@ -32,6 +32,51 @@ failure costs the most. Both chapters fall back to an interactive 2D canvas
 driven by the same numbers. If measurement on a target tablet showed the shader
 below 30 fps, the fallback should become the primary path.
 
+## How sharp the picture is allowed to be
+
+The two chapters that run the shader draw a world into an offscreen canvas and
+magnify it onto the back wall. Two separate things were making that picture
+soft, and only one of them was physics.
+
+**The texture was 640 × 480, whatever the screen showed.** On a 1244-pixel
+canvas every texel was magnified 1.94 times, which put a bilinear ramp on every
+edge in the scene — softness indistinguishable by eye from the blur of a wider
+hole, on the two screens whose whole subject is how sharp a pinhole can be. It
+is now drawn at 1024 or 2048 texels, picked from the canvas: 2048 is the floor
+OpenGL ES 3.0 puts under `MAX_TEXTURE_SIZE`, so it needs no runtime query and no
+fallback, and a phone does not carry the 12.6 MB a 2048 × 1536 texture costs to
+hold texels it cannot show. Measured on the horizon edge of chapter 0, on a
+1079-pixel picture, both changes together took the 10–90 % ramp from 3.95 px to
+1.64 px — and 1.64 px is what the optics alone predict.
+
+*Rejected: a raster asset at high resolution.* It would have to be authored,
+optimised, cached and kept consistent with the SVG chapters, and the code that
+draws it instead is forty lines that weigh nothing. *Would win* if the scene
+ever needed to be a photograph.
+
+*Rejected: refitting the texture to the canvas on every resize.* Two tiers
+already give at least a texel per pixel on every plausible layout, and tracking
+the resize would mean rebuilding the renderer from the `ResizeObserver` — the
+exact thing that observer is careful not to do. *Would win* if a chapter ever
+animated the size of the picture.
+
+**The opening screen modelled an eleven-centimetre box.** At the best possible
+hole, a box that size blurs by 0.64 % of the wall's height: a visibly soft
+picture, and the honest answer for a shoebox. But the shader maps the whole
+scene onto the whole wall whatever the geometry, so those numbers set only the
+blur and the exposure — scaling the box and the wall together keeps the framing
+and divides the relative blur by the square root of the factor. The opening is
+now a two-metre chamber, at 0.16 %. That is not a thumb on the scale: it is the
+reason a walk-in camera obscura is sharper than a shoebox, and it is the object
+this app is named after.
+
+**Open objection:** chapter 5 still models a 10 cm box, so the sharpest picture
+it can reach stays four times softer than the one on the opening screen. A child
+who noticed would be noticing something true, and chapter 6 is where the size of
+the box stops being invisible. *Would win* if chapter 5 ever claimed its sweet
+spot were the sharpest picture possible, rather than the sharpest that box can
+make.
+
 ## Deliberately absent dependencies
 
 No 3D library, no router, no i18n framework, no state manager.
