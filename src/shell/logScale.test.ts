@@ -23,8 +23,9 @@ describe('logScale', () => {
   })
 
   it('lands the sharpest hole near the centre of the track', () => {
-    // 0.0366·√100 mm, the optimum this slider exists to make findable.
-    const position = hole.toSlider(0.366)
+    // The optimum for chapter 5's 300 mm box — the hole this slider exists to
+    // make findable, and the one it opens on.
+    const position = hole.toSlider(0.63)
     expect(position).toBeGreaterThan(0.35)
     expect(position).toBeLessThan(0.65)
   })

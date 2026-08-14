@@ -76,8 +76,8 @@ now a two-metre chamber, at 0.16 %. That is not a thumb on the scale: it is the
 reason a walk-in camera obscura is sharper than a shoebox, and it is the object
 this app is named after.
 
-**The objection this left open, and how it was settled.** Chapter 5 still models
-a 10 cm box, so the sharpest picture it can reach stays several times softer than
+**The objection this left open, and how it was settled.** Chapter 5 modelled a
+10 cm box at the time, so the sharpest picture it could reach stayed softer than
 the opening screen — and a reader did notice, and read it as the old blurry
 texture having survived on that chapter. It had not; measured on the live site,
 the ramp of the horizon edge came to 0.152 % of the picture height on chapter 0
@@ -104,24 +104,25 @@ chapter 0**, a factor 4.1, so `f × 16.8`.
 
 That gives a **1.7 m chamber only if the subject moves back with the box**, which
 is what chapter 0 does — its house stands at 30 m for a 2 m box, fifteen box
-lengths away, exactly as chapter 5's stands at 4 m for 100 mm. Grow the box alone
-and `k` grows with it, the `1/√f` law stops holding, and the answer is worse:
-with the house left at 4 m, matching chapter 0 takes **2.8 m of box**. Either
-way the number is metres, and the point stands.
+lengths away, as chapter 5's did at 4 m for 100 mm. Grow the box alone and `k`
+grows with it, the `1/√f` law stops holding, and the answer is worse: with the
+house left at 4 m, matching chapter 0 took **2.8 m of box**. Either way the
+number is metres, and the point stands.
 
 (Measured on screen the two chapters come out at 0.555 % and 0.152 %; the ramp of
 an edge is a proxy for the blur, not the blur, and the two canvases are different
 sizes, so the model is what the arithmetic above uses.)
 
-Chapter 5 is deliberately a box you can hold, which chapter 6 (60 to 190 mm),
-chapter 8 and chapter 9 all depend on. Asked to choose, the reader chose
-coherence. The residual gap is the physics, and it is what chapter 6 exists to
-teach.
+Chapter 5 is deliberately a box you can hold, which chapter 6, chapter 8 and
+chapter 9 all depend on. Asked to choose, the reader chose coherence. The
+residual gap is the physics, and it is what chapter 6 exists to teach.
 
-*Rejected on the way:* growing chapter 5 to a shoebox's 300 mm — 1.4× for a box
-that would then sit outside its own neighbour's range; and raising the wall
-without the box, which works arithmetically and would put the field of view at
-100° with nothing on screen to say so.
+*Rejected on the way:* raising the wall without the box, which works
+arithmetically and would put the field of view at 100° with nothing on screen to
+say so. And — wrongly, see the entry below — growing chapter 5's box, costed at
+1.4× against chapter 6's 190 mm maximum. The figure was right and the box was
+not: the one that mattered was the 300 mm chapter 9 prescribes, worth 1.7×, and
+it was never put in the table.
 
 **And then it turned out to be a sharpness problem after all.** The box that was
 modelled and the box that is prescribed were not the same object: chapter 9 has

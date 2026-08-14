@@ -31,7 +31,7 @@ import { ChapterShell } from '../shell/ChapterShell'
  * focus with nothing on screen to explain why.
  *
  * The box the child will build is modelled elsewhere on purpose. Chapter 5 runs
- * a 10 cm one, where the softness at the best possible hole *is* the lesson
+ * the shoebox, where the softness at the best possible hole *is* the lesson
  * instead of a disappointment on the opening screen.
  */
 const BOX_LENGTH_MM = 2000
