@@ -27,9 +27,23 @@ import { Meter } from '../shell/Meter'
  * the track and a child sweeps straight past it.
  */
 
-const BOX_LENGTH_MM = 100
-const OBJECT_DISTANCE_MM = 4000
-const WALL_HEIGHT_MM = 80
+/*
+ * A shoebox, which is the box chapter 9 tells the child to build and the one
+ * chapter 6 now reads out — 12 to 38 cm, this sitting near its top.
+ *
+ * It used to be 10 cm, below both, and that cost more than tidiness. The blur at
+ * the best hole goes as `√(4.88·λ·f·k)` over the wall, so it falls with a bigger
+ * box: 0.66 % of the wall's height at 10 cm against 0.39 % here. Nothing else in
+ * this chapter can touch that number — at the optimum the geometric and the
+ * diffraction terms are equal by definition, and the wall keeps its 0.8 of the
+ * box so the framing does not move.
+ *
+ * The house stands at 30 m, where chapter 0 already puts it. It is the same
+ * drawing; it was at 4 m here, which no house of that size can be.
+ */
+const BOX_LENGTH_MM = 300
+const OBJECT_DISTANCE_MM = 30_000
+const WALL_HEIGHT_MM = 240
 const MIN_HOLE_MM = 0.05
 const MAX_HOLE_MM = 5
 

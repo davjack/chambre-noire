@@ -123,11 +123,32 @@ that would then sit outside its own neighbour's range; and raising the wall
 without the box, which works arithmetically and would put the field of view at
 100° with nothing on screen to say so.
 
-**Still open, and not a sharpness problem:** the box that is modelled and the box
-that is prescribed are not the same object. Chapter 9 has the child build a
-shoebox, about 300 mm along the axis; chapter 6 stops at 190 and chapter 5 models
-100. *Would win* its own change the day someone measures what a child's box
-actually does against what these chapters predict.
+**And then it turned out to be a sharpness problem after all.** The box that was
+modelled and the box that is prescribed were not the same object: chapter 9 has
+the child build a shoebox, about 300 mm along the axis, while chapter 6 stopped
+at 190 and chapter 5 modelled 100. Recorded here as tidiness, out of scope, worth
+its own change one day.
+
+It was worth more than that. The blur at the best hole falls as the box grows, so
+those three chapters disagreeing about the size were also the reason chapter 5
+looked broken beside chapter 0. Chapter 5 now models 300 mm with a 240 mm wall —
+the same 0.8 ratio, so the framing does not move — and chapter 6 reads out 12 to
+38 cm instead of 6 to 19, which is a relabelling and nothing more: its scene
+units are unchanged, and `MM_PER_UNIT` cancels out of its brightness meter, which
+was checked in pixels rather than argued from the algebra. The best hole moves
+from 0.36 mm to 0.63 mm, which is the better answer for a shoebox and still a
+needle.
+
+Measured at the screen size the report came from: the horizon edge on chapter 5
+went from **0.552 % of the picture height to 0.289 %**, against 0.174 % on
+chapter 0. The gap that was 3.1× is 1.7×.
+
+**Open objection, and it is the one that keeps coming back:** 1.7× is still
+visible if the two screens are compared side by side. Nothing coherent closes it
+— a hand-held box cannot reach a two-metre chamber, and the arithmetic above says
+by how much. *Would win* the day the answer is judged to be parity rather than
+coherence, at which point chapter 5 stops being the box chapters 6, 8 and 9
+describe.
 
 ## Deliberately absent dependencies
 

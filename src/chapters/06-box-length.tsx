@@ -31,7 +31,19 @@ const FIGURE_HEIGHT = 210
 const HOLE_MM = 0.4
 const MIN_LENGTH = 120
 const MAX_LENGTH = 380
-const MM_PER_UNIT = 0.5
+/**
+ * What one scene unit is worth, and so what this chapter says its box measures:
+ * 12 to 38 cm, sitting at 19 in the middle. It used to be half that, which put
+ * the box this app *models* — 6 to 19 cm here, 10 cm in chapter 5 — below the
+ * box it *prescribes*, a shoebox, about 30 cm along the axis in chapter 9. Three
+ * chapters describing one object and disagreeing about its size.
+ *
+ * It changes nothing that is drawn, and nothing that is computed either: the
+ * brightness below is a ratio of `(d/f)²` against its own reference, so the unit
+ * cancels. Only the label moves.
+ */
+const MM_PER_UNIT = 1
+const MM_PER_CM = 10
 /**
  * Left of the shared default, because this is the only chapter whose box grows.
  * At the long end it runs `MAX_LENGTH` plus the chamber's back margin past the
@@ -71,7 +83,9 @@ export function BoxLengthChapter() {
             max={MAX_LENGTH}
             step={2}
             onChange={setBoxLength}
-            valueText={t('unit.cm', { value: (boxLength * 0.05).toFixed(1) })}
+            valueText={t('unit.cm', {
+              value: ((boxLength * MM_PER_UNIT) / MM_PER_CM).toFixed(1),
+            })}
           />
           <Meter label={t('meter.brightness')} value={relative} colour="var(--color-ray)" />
         </div>
