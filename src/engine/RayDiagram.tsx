@@ -456,7 +456,10 @@ export function ProjectedFigure({
     />
   )
 
-  const colour = Math.max(0, Math.min(1, saturation))
+  // Clamped rather than trusted, the way `optics.ts` clamps its lengths: a
+  // filter built with a NaN in it has no primitive at all, and an element with
+  // an empty filter renders as nothing. The picture would vanish in silence.
+  const colour = Number.isFinite(saturation) ? Math.max(0, Math.min(1, saturation)) : 1
   if (blur <= 0 && colour >= 1) return figure
 
   return (

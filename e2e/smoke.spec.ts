@@ -140,7 +140,11 @@ test('the eye chapter drains the colour from the picture as the room goes dark',
 }) => {
   await page.goto('/#/your-eye')
   const slider = page.getByRole('slider').first()
-  const drain = page.locator('feColorMatrix')
+  // Scoped to the scene: the assertions below are counts, and the day anything
+  // else on the page grows a colour filter this test should still be talking
+  // about the retina rather than failing with its name on someone else's bug.
+  const drain = page.locator('#scene feColorMatrix')
+  const picture = page.locator('#scene g[filter] > g')
 
   // Lit room: cones, full colour, and so no colour filter is built at all.
   await slider.fill('100')
@@ -149,13 +153,22 @@ test('the eye chapter drains the colour from the picture as the room goes dark',
   // Dark room: rods, one pigment, no colour left to report.
   await slider.fill('0')
   await expect(drain).toHaveCount(1)
-  expect(Number(await drain.getAttribute('values'))).toBe(0)
+  await expect(drain).toHaveAttribute('values', '0')
+  const darkest = Number(await picture.getAttribute('opacity'))
 
   // And in between it is in between, rather than a switch thrown at a threshold.
-  await slider.fill('17')
+  // `toHaveAttribute` rather than a bare read: the count does not change here,
+  // so nothing else in this block would retry, and a value read a frame early
+  // would fail as if the physics had moved.
+  await slider.fill('50')
+  await expect(drain).not.toHaveAttribute('values', '0')
   const dusk = Number(await drain.getAttribute('values'))
   expect(dusk).toBeGreaterThan(0)
   expect(dusk).toBeLessThan(1)
+
+  // The other half of the same answer: it is dimmer in the dark. Asserted
+  // because deleting the opacity alone left every line above green.
+  expect(Number(await picture.getAttribute('opacity'))).toBeGreaterThan(darkest)
 })
 
 test('progress survives a reload', async ({ page }) => {

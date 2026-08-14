@@ -266,6 +266,16 @@ real retina does:
   with the picture, because a child who cannot read has to be told what they are
   watching happen.
 
+Both curves have floors, and the floors are not taste. Measured on the rendered
+pixels — the filter runs in linear RGB, so modelling it in sRGB gets the answer
+wrong — the object at its first floor came out at 2.1:1 against the page, under
+the 3:1 this project claims in `styles.css`, and axe has no rule for the stroke
+of an SVG that would ever have said so. The beams got a steeper curve than the
+room for the same reason: they converge exactly where the picture is, so a floor
+under them is a floor under the background the picture must be read against.
+Everything now measures 3.4:1 or better at every position of the slider, and the
+dimming that survives those floors is the lesson.
+
 **Rejected: brightness from real retinal illuminance**, luminance × pupil area.
 With this chapter's linear pupil (four to one in diameter over a slider running
 0 to 100) that curve is not monotone — it peaks near the middle, so the picture
