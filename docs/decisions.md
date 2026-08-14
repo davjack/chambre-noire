@@ -266,6 +266,13 @@ real retina does:
   with the picture, because a child who cannot read has to be told what they are
   watching happen.
 
+The curves live in `src/chapters/eyeLight.ts` rather than in the chapter, next to
+their test, for the reason chapter 8 keeps `eclipseImage` out of the chapter that
+draws it: the numbers invite retuning, and three of the properties they have to
+keep — the picture brightens with the room, it never outshines the object, the
+colour has finished draining where the narration says it has — were each wrong at
+some point while the chapter was being built, with nothing failing.
+
 Both curves have floors, and the floors are not taste. Measured on the rendered
 pixels — the filter runs in linear RGB, so modelling it in sRGB gets the answer
 wrong — the object at its first floor came out at 2.1:1 against the page, under

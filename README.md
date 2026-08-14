@@ -20,7 +20,7 @@ whatever is written can be spoken aloud.
 | 4 | Pourquoi c'est à l'envers | Lifts the figure, in two views | Rays cross at the hole — both axes flip |
 | 5 | Grand trou ou petit trou ? | Slides the aperture | Sharp or bright: pick one |
 | 6 | Boîte courte ou longue | Slides the box length | Bigger picture, dimmer picture |
-| 7 | Ton œil est une boîte noire | Changes the room light | The pupil is the hole |
+| 7 | Ton œil est une boîte noire | Changes the room light | The pupil is the hole — and night has no colours |
 | 8 | Comment marche ta boîte | Slides the Moon over the Sun, opens a leak | What each part of the box is for — and an eclipse on the paper |
 | 9 | Fabrique la tienne | Reads a recipe | A shoebox, foil and a needle |
 
@@ -125,7 +125,7 @@ without a rebuild. No environment variables, no backend, nothing to configure.
 
 ## Constraints it holds itself to
 
-- **74.5 KB of JavaScript**, gzipped — budget of 200 KB, enforced by
+- **74.6 KB of JavaScript**, gzipped — budget of 200 KB, enforced by
   `npm run verify`.
 - **Zero WCAG 2.2 AA violations** on every chapter, checked by axe in CI-able
   tests, not asserted in prose.
