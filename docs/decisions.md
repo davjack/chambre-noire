@@ -246,6 +246,41 @@ wide pupil in a dark room lets more of the world in without smearing it, and
 blurring the retina the way chapters 2 and 3 blur their walls would teach a
 six-year-old that the dark makes them short-sighted.
 
+That was settled correctly and then read as licence to make it answer nothing at
+all: the chapter has one control, and the picture the chapter is *about* was the
+only thing on screen that ignored it. `e2e/smoke.spec.ts` already had a name for
+that — *a picture that did not answer the control* — and a test for it on chapter
+8, and none here. It now does two things as the room darkens, both of them what a
+real retina does:
+
+- **It dims, on a shallower slope than the room.** The gap between the two curves
+  is the pupil's compensation, drawn instead of asserted — which is what the line
+  being read aloud had been claiming on its own.
+- **It loses its colours.** Rods carry a single pigment: *"Rods are more
+  abundant, contain greater photopigment, have high sensitivity with lower visual
+  acuity, and are achromatic, referring to using a singular photopigment,
+  rhodopsin"*
+  ([NIH StatPearls, *Physiology, Night Vision*](https://www.ncbi.nlm.nih.gov/books/NBK545246/)).
+  The beams keep their colour on the way in, because the light really is
+  coloured — it is the eye that can no longer say so. The narrated line changed
+  with the picture, because a child who cannot read has to be told what they are
+  watching happen.
+
+**Rejected: brightness from real retinal illuminance**, luminance × pupil area.
+With this chapter's linear pupil (four to one in diameter over a slider running
+0 to 100) that curve is not monotone — it peaks near the middle, so the picture
+would brighten as the child turns the light *off*. Honest arithmetic, dishonest
+result, because the slider is not a photometric scale. *Would win* the day the
+light control becomes logarithmic, which is what it would take to spell the six
+orders of magnitude a real retina answers over.
+
+**Rejected: a button that turns the retinal picture the right way up**, to
+illustrate the line about the brain that this chapter states and never shows.
+The image on the retina never turns around; only the interpretation does, so
+drawing it rotating would be exactly the convenient lie chapter 8 refuses.
+*Would win* as a second face-on panel in chapter 8's style — which is a screen,
+not a prop.
+
 **Open objection, and it is the real one:** in a side cutaway the back wall is
 seen edge on, and a picture painted on it is a band, not a figure. *Comment
 marche ta boîte* refuses that lie explicitly — it draws the eclipse as a lit

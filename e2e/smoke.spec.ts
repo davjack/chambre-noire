@@ -121,6 +121,43 @@ test('the box chapter bites the picture, and the leak drowns it', async ({ page 
   expect(await narration.textContent()).toMatch(/disparu|gone/)
 })
 
+/*
+ * The eye chapter's slider, and the one thing on that screen it is about.
+ *
+ * The pupil and the beams answered it from the first day; the picture at the
+ * back of the eye did not, and nothing in this file said so — the chapter
+ * opened, the heading was there, axe was happy. The same shape of defect as the
+ * two chapter 8 caught above.
+ *
+ * Read off the filter rather than off the pixels, and that is not a shortcut
+ * either: the pupil and the beams change with the same slider, so a screenshot
+ * of the scene cannot tell a picture that answers from a picture that is
+ * frozen beside things that move. The colour is the half asserted here; the
+ * dimming rides on the same slider and the same `light`.
+ */
+test('the eye chapter drains the colour from the picture as the room goes dark', async ({
+  page,
+}) => {
+  await page.goto('/#/your-eye')
+  const slider = page.getByRole('slider').first()
+  const drain = page.locator('feColorMatrix')
+
+  // Lit room: cones, full colour, and so no colour filter is built at all.
+  await slider.fill('100')
+  await expect(drain).toHaveCount(0)
+
+  // Dark room: rods, one pigment, no colour left to report.
+  await slider.fill('0')
+  await expect(drain).toHaveCount(1)
+  expect(Number(await drain.getAttribute('values'))).toBe(0)
+
+  // And in between it is in between, rather than a switch thrown at a threshold.
+  await slider.fill('17')
+  const dusk = Number(await drain.getAttribute('values'))
+  expect(dusk).toBeGreaterThan(0)
+  expect(dusk).toBeLessThan(1)
+})
+
 test('progress survives a reload', async ({ page }) => {
   await page.goto('/#/the-hole')
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible()

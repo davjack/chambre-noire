@@ -412,12 +412,17 @@ export function Figure({
  * standard deviation of a quarter of it, which is the honest way to spell a
  * disc as a Gaussian and the same approximation the 2D canvas fallback
  * documents.
+ *
+ * `saturation` is what is left of the picture's colour. Only the eye chapter
+ * uses it, and only because a retina in the dark is running on rods, which
+ * carry one pigment and cannot tell one wavelength from another.
  */
 export function ProjectedFigure({
   geometry,
   centreY = 0,
   height,
   blur = 0,
+  saturation = 1,
   opacity = 1,
   sceneX,
 }: {
@@ -428,6 +433,8 @@ export function ProjectedFigure({
   height: number
   /** Geometric blur on the wall, in scene units. */
   blur?: number
+  /** 0 leaves the picture grey, 1 leaves its colours alone. */
+  saturation?: number
   opacity?: number
   /** Defaults to the face of the back wall the light actually lands on. */
   sceneX?: number
@@ -449,7 +456,8 @@ export function ProjectedFigure({
     />
   )
 
-  if (blur <= 0) return figure
+  const colour = Math.max(0, Math.min(1, saturation))
+  if (blur <= 0 && colour >= 1) return figure
 
   return (
     <>
@@ -458,7 +466,9 @@ export function ProjectedFigure({
           The region has to be given, and given generously downwards and
           upwards. The default is 120 % of the bounding box, and a filter is
           cropped to its region: a smear that should fade out would end in a
-          straight edge instead.
+          straight edge instead. Draining the colour needs no room of its own —
+          a colour matrix moves nothing — so the region is sized by the blur
+          alone and is simply along for the ride when only the colour changes.
 
           Sideways nothing spreads, so the margin only has to clear the arms —
           but the default clears them by 0.002 of the figure's height, which is
@@ -471,7 +481,9 @@ export function ProjectedFigure({
           taller than the picture, always covers it.
         */}
         <filter id={filterId} x="-25%" y="-100%" width="150%" height="300%">
-          <feGaussianBlur stdDeviation={`0 ${blur / 4}`} />
+          {/* The optics first, then what the eye behind them makes of it. */}
+          {blur > 0 ? <feGaussianBlur stdDeviation={`0 ${blur / 4}`} /> : null}
+          {colour < 1 ? <feColorMatrix type="saturate" values={String(colour)} /> : null}
         </filter>
       </defs>
       <g filter={`url(#${filterId})`}>{figure}</g>
