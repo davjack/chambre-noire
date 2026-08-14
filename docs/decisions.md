@@ -277,11 +277,17 @@ Both curves have floors, and the floors are not taste. Measured on the rendered
 pixels — the filter runs in linear RGB, so modelling it in sRGB gets the answer
 wrong — the object at its first floor came out at 2.1:1 against the page, under
 the 3:1 this project claims in `styles.css`, and axe has no rule for the stroke
-of an SVG that would ever have said so. The beams got a steeper curve than the
-room for the same reason: they converge exactly where the picture is, so a floor
-under them is a floor under the background the picture must be read against.
-Everything now measures 3.4:1 or better at every position of the slider, and the
-dimming that survives those floors is the lesson.
+of an SVG that would ever have said so. **The object and the picture** measure
+3.3:1 or better at every position of the slider; the dimming that survives those
+floors is the lesson.
+
+The beams do not, and never have on any screen of this app: around 1.2:1, because
+translucent light that adds up where it overlaps is what they are for. They were
+briefly given a curve of their own, falling faster than the room, to darken the
+background the picture is read against — which drew the light crossing the room
+dimming faster than the room itself, on the screen whose narrated line says the
+pupil is opening to catch more of it. They are a fixed share of `room` again, a
+smaller one; the floor belongs under the picture, not under the light.
 
 **Rejected: brightness from real retinal illuminance**, luminance × pupil area.
 With this chapter's linear pupil (four to one in diameter over a slider running

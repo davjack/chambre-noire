@@ -49,6 +49,20 @@ describe('what the room light leaves for the eye', () => {
     }
   })
 
+  it('never dims the light crossing the room faster than the room itself', () => {
+    /*
+     * The beams pass through a pupil that is opening. Whatever else they do,
+     * they cannot fall away faster than the room they cross — that would draw
+     * the least light passing at the moment the narration says the pupil has
+     * opened to catch more of it. They did, briefly, to darken the background
+     * the picture is read against; the floor belongs under the picture instead.
+     */
+    for (const light of SETTINGS) {
+      const { room, beams } = at(light)
+      expect(beams / room).toBeCloseTo(at(100).beams / at(100).room, 12)
+    }
+  })
+
   it('closes the gap between the two as the room darkens, which is the pupil catching up', () => {
     const dark = at(0)
     const bright = at(100)

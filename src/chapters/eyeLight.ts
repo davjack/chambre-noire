@@ -28,11 +28,11 @@ export interface EyeLight {
  * some point while the chapter was being built:
  *
  *  - `retina` rises with the light, everywhere. It carries the pupil's own
- *    contribution, which goes as the square of its diameter — the inverse-square
- *    law, so it is read from `optics.ts` rather than written out again — and
- *    that term pulls the other way as the room darkens. Written carelessly the
- *    curve turns over, and the picture brightens as the child turns the light
- *    off.
+ *    contribution, which goes as the square of its diameter because that is how
+ *    the area of a hole goes — so it is read from `optics.ts` rather than
+ *    written out again — and that term pulls the other way as the room darkens.
+ *    Written carelessly the curve turns over, and the picture brightens as the
+ *    child turns the light off.
  *  - `retina` stays under `room`, everywhere. Opacity is how much light there
  *    is, in every chapter of this app; a picture drawn brighter than the object
  *    it is a picture of makes a claim none of them means to make. The two
@@ -44,18 +44,29 @@ export interface EyeLight {
  *
  * The floors are not taste either: below them the object and the picture fall
  * under the 3:1 this project holds itself to, measured on rendered pixels, and
- * nothing in the test suite can see that. `beams` falls further than `room`
- * because it needs no such floor — light in flight carries no identity — and
- * because the three of them converge exactly where the picture is, so a floor
- * under them is a floor under the background it has to be read against.
+ * nothing in the test suite can see that.
+ *
+ * `beams` is a fixed share of `room` and never a curve of its own. It was one
+ * briefly, falling faster, to darken the background the picture is read
+ * against — and that put the light travelling through the pupil dropping faster
+ * than the room it crosses, on the screen whose narrated line says the pupil is
+ * opening to catch more of it. The floor belongs under the picture, where it is,
+ * not under the light.
+ *
+ * `pupil` is a `PinholeSetup` because `brightnessRatio` takes one, but only its
+ * `holeDiameter` reaches the result: the `1/f²` in the ratio cancels against its
+ * own reference. So the scene units passed here rather than the millimetres
+ * `optics.ts` documents are harmless — the quantity is scale-free — and changing
+ * `EYE_DEPTH` will not move this number.
  */
 export function eyeLight(light: number, pupil: PinholeSetup, widestPupil: number): EyeLight {
   const lit = Math.max(0, Math.min(1, light / 100))
+  const room = 0.56 + 0.44 * lit
 
   return {
-    room: 0.52 + 0.48 * lit,
-    retina: 0.26 + 0.5 * lit + 0.22 * brightnessRatio(pupil, widestPupil),
-    beams: 0.35 * (0.25 + 0.75 * lit),
+    room,
+    retina: 0.3 + 0.468 * lit + 0.22 * brightnessRatio(pupil, widestPupil),
+    beams: 0.28 * room,
     saturation: Math.max(0, Math.min(1, (light - DARK_BELOW) / COLOUR_SPREAD)),
   }
 }

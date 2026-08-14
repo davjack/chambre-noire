@@ -161,6 +161,10 @@ test('the eye chapter drains the colour from the picture as the room goes dark',
   // so nothing else in this block would retry, and a value read a frame early
   // would fail as if the physics had moved.
   await slider.fill('50')
+  // The count first: a negative assertion is also satisfied by a locator that
+  // matches nothing, so on its own it would let the filter vanish here and push
+  // the failure onto the read below, as a bare thirty-second timeout.
+  await expect(drain).toHaveCount(1)
   await expect(drain).not.toHaveAttribute('values', '0')
   const dusk = Number(await drain.getAttribute('values'))
   expect(dusk).toBeGreaterThan(0)
