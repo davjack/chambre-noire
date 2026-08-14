@@ -55,6 +55,12 @@ test('sliders move and the narration follows', async ({ page }) => {
   const slider = page.getByRole('slider').first()
   const narration = page.locator('[aria-live="polite"]')
 
+  // Where the chapter opens, before anything is touched: on the best hole this
+  // box has. It used to open three quarters of the way along the track, nine
+  // times softer than the opening screen, and read as a rendering fault. Nothing
+  // else in this suite would notice that coming back.
+  await expect(narration).toHaveText(/plus net possible|as sharp as it can be/)
+
   await slider.fill('1')
   const wideOpen = await narration.textContent()
 

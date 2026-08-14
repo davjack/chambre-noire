@@ -91,13 +91,24 @@ trade. It now opens on the optimum, which is where the mark on the track already
 pointed: 0.555 %, and the line read aloud on arrival says "Là, c'est le plus net
 possible !"
 
-The first number cannot be answered. At the best hole the relative blur is
-`2.21·√(λf) / wall`, which with a fixed wall-to-box ratio is `2.76·√λ / √f`: the
-only lever is a bigger box, and it pays as a square root. Matching chapter 0
-would take **f × 16.8, a 1.7 m chamber** — and chapter 5 is deliberately a box
-you can hold, which chapter 6 (60 to 190 mm), chapter 8 and chapter 9 all depend
-on. Asked to choose, the reader chose coherence. The residual gap is the physics,
-and it is what chapter 6 exists to teach.
+The first number cannot be answered. At the best hole the geometric and the
+diffraction terms are equal, so the total is `√(4.88·λ·f·k)` with
+`k = (f + u) / u` — 2.24·√(λf) for chapter 5, where `k` is 1.025. Over the wall,
+and holding a chapter's own wall-to-box ratio, that falls as `1/√f`: the only
+lever is a bigger box, and it pays as a square root.
+
+The two chapters are not quite the same shape — chapter 5 puts its wall at 0.80
+of its box, chapter 0 at 0.75 — so the comparison is between the models rather
+than along one curve: **0.656 % of the wall for chapter 5 against 0.160 % for
+chapter 0**, a factor 4.1, so `f × 16.8` — a **1.7 m chamber**. (Measured on
+screen the two come out at 0.555 % and 0.152 %; the ramp of an edge is a proxy
+for the blur, not the blur, and the two canvases are different sizes, so the
+model is what the arithmetic above uses.)
+
+Chapter 5 is deliberately a box you can hold, which chapter 6 (60 to 190 mm),
+chapter 8 and chapter 9 all depend on. Asked to choose, the reader chose
+coherence. The residual gap is the physics, and it is what chapter 6 exists to
+teach.
 
 *Rejected on the way:* growing chapter 5 to a shoebox's 300 mm — 1.4× for a box
 that would then sit outside its own neighbour's range; and raising the wall
