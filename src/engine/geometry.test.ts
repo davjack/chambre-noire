@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { geometricBlur, imageHeight, projectPoint } from '../physics/optics'
+import { LANDMARKS } from './RayDiagram'
 import {
   AXIS_Y,
   HOLE_X,
@@ -67,7 +68,8 @@ describe('scene geometry', () => {
     // two different claims about the same box.
     const placement = imagePlacement(geometry, 40, 250)
 
-    for (const offset of [-0.45, -0.1, 0, 0.32, 0.45]) {
+    // The landmarks the chapters actually follow, plus the extremes of the body.
+    for (const offset of [...LANDMARKS.map((landmark) => landmark.offset), -0.45, 0, 0.32]) {
       const drawnFromTheCentre = placement.centreY - offset * placement.height
       expect(drawnFromTheCentre).toBeCloseTo(geometry.landing(40 + offset * 250, 0), 10)
     }

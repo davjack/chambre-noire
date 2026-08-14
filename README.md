@@ -38,10 +38,10 @@ The pictures are not illustrations of the physics — they are drawn from it.
   curve bottoms out.
 - The lit band a chapter draws on the wall is *exactly* `geometricBlur` tall —
   asserted by a test, not by eye.
-- The picture of the figure on the back wall — every chapter with a box draws it
-  — is placed by the same projection that draws the rays reaching it, down to
-  each of its three landmarks. Also a test, because a diagram that flips the
-  sign still looks entirely plausible.
+- Five chapters put the little person in front of a box, and all five draw his
+  picture inside it — placed by the same projection that draws the rays reaching
+  it, down to each of the three landmarks. Also a test, because a diagram that
+  flips the sign still looks entirely plausible.
 - Chapter 8 bites the picture of the Sun on the side opposite the sky, because
   the rays crossed at the hole. That inversion is asserted too, along with the
   rule that the Moon's shadow never darkens wall the Sun was not lighting.

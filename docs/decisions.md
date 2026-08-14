@@ -54,18 +54,24 @@ optimised, cached and kept consistent with the SVG chapters, and the code that
 draws it instead is forty lines that weigh nothing. *Would win* if the scene
 ever needed to be a photograph.
 
-*Rejected: refitting the texture to the canvas on every resize.* Two tiers
-already give at least a texel per pixel on every plausible layout, and tracking
-the resize would mean rebuilding the renderer from the `ResizeObserver` — the
-exact thing that observer is careful not to do. *Would win* if a chapter ever
-animated the size of the picture.
+*Rejected: refitting the texture to the canvas on every resize.* Two tiers give
+at least a texel per pixel over the range that matters, and tracking the resize
+would mean rebuilding the renderer from the `ResizeObserver` — the exact thing
+that observer is careful not to do. The cap is a cap, though: a 1440p or 5K
+screen at device-pixel-ratio 2 can ask for 2100 to 2500 pixels of picture and
+still get 2048 texels. That is a magnification of 1.03 to 1.2, well under the
+1.94 this replaced, and 2048 is the largest texture WebGL2 guarantees — so the
+answer there is the cap, not the tiers. *Would win* if a chapter ever animated
+the size of the picture.
 
 **The opening screen modelled an eleven-centimetre box.** At the best possible
 hole, a box that size blurs by 0.64 % of the wall's height: a visibly soft
 picture, and the honest answer for a shoebox. But the shader maps the whole
-scene onto the whole wall whatever the geometry, so those numbers set only the
-blur and the exposure — scaling the box and the wall together keeps the framing
-and divides the relative blur by the square root of the factor. The opening is
+scene onto the whole wall whatever the geometry, and that screen pins its
+exposure to 1 — the eye of someone who has been standing in the chamber a while
+— so those numbers set exactly one thing: how blurred the picture is. Scaling
+the box and the wall together keeps the framing and divides the relative blur by
+the square root of the factor. The opening is
 now a two-metre chamber, at 0.16 %. That is not a thumb on the scale: it is the
 reason a walk-in camera obscura is sharper than a shoebox, and it is the object
 this app is named after.

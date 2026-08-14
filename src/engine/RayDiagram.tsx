@@ -75,11 +75,14 @@ export const BOX_BACK_MARGIN = 40
  */
 export const BOX_BACK_MARGIN_BARE = 18
 
-/** Width of the chamber a `Box` draws, from the hole to past the back wall. */
-export function boxInnerWidth(
-  geometry: SceneGeometry,
-  backMargin: number = BOX_BACK_MARGIN,
-): number {
+/**
+ * Width of the chamber a `Box` draws, from the hole to past the back wall.
+ *
+ * `backMargin` is required rather than defaulted: a chapter that gives `Box` one
+ * margin and this function another would paint its wash narrower than the
+ * chamber it is meant to fill, and nothing would say so.
+ */
+export function boxInnerWidth(geometry: SceneGeometry, backMargin: number): number {
   return geometry.wallX - geometry.holeX + backMargin
 }
 
@@ -457,13 +460,17 @@ export function ProjectedFigure({
           cropped to its region: a smear that should fade out would end in a
           straight edge instead.
 
-          Sideways the default would do, since nothing spreads there. Vertically
+          Sideways nothing spreads, so the margin only has to clear the arms —
+          but the default clears them by 0.002 of the figure's height, which is
+          a third of a pixel, and the first change to how `Figure` draws an arm
+          would put the straight edges back with no test moving. Now that the
+          horizontal spread is zero, margin there costs nothing. Vertically
           the blur reaches about 2.8 standard deviations, i.e. 0.7 of `blur`,
           and `blur` is never more than the picture is tall — the fade above
           sees to that — so one whole bounding box of margin, itself slightly
           taller than the picture, always covers it.
         */}
-        <filter id={filterId} x="-10%" y="-100%" width="120%" height="300%">
+        <filter id={filterId} x="-25%" y="-100%" width="150%" height="300%">
           <feGaussianBlur stdDeviation={`0 ${blur / 4}`} />
         </filter>
       </defs>

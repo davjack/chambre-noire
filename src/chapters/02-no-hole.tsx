@@ -28,7 +28,11 @@ import { ChapterShell } from '../shell/ChapterShell'
 const OBJECT_DISTANCE = 430
 const BOX_LENGTH = 300
 const FIGURE_HEIGHT = 250
-/** Above this the child has not moved the slider yet. */
+/**
+ * Above this the window is open as wide as the chapter goes and the line says
+ * so. The slider starts below it, so the opening line is the one about every
+ * point lighting the whole wall — which is what the wall is showing at 300.
+ */
 const UNTOUCHED_ABOVE = 340
 /*
  * There is no threshold constant for "the wall is showing something again": the
@@ -108,8 +112,8 @@ export function NoHoleChapter() {
 
           {/* The picture that is not there. Every point of him is spread over a
               band taller than he is, so `ProjectedFigure` fades him to nothing
-              — and he starts coming back at `WIDE_ENOUGH`, the same window
-              where the line being read aloud says he does. */}
+              — and he starts coming back at the window where `picture` above
+              leaves zero, which is the window the narration changes at. */}
           <ProjectedFigure
             geometry={geometry}
             height={FIGURE_HEIGHT}

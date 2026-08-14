@@ -132,10 +132,14 @@ export function YourEyeChapter() {
             oversight: an eye is not a pinhole, it has a lens, and opening the
             pupil in a dark room lets more of the world in without smearing it.
             Blurring this the way chapters two and three blur theirs would teach
-            a six-year-old that the dark makes them short-sighted. */}
-        <g clipPath="url(#eye-chamber)">
-          <ProjectedFigure geometry={geometry} height={FIGURE_HEIGHT} />
-        </g>
+            a six-year-old that the dark makes them short-sighted.
+
+            Outside the chamber clip on purpose, where the three marks it
+            replaces also were. That clip is a circle 151 units across and the
+            picture's right foot reaches 159, so clipping it takes the foot off
+            in a straight line across the middle of the retina — while unclipped
+            it lands *on* the retina, which is drawn from 145 to 161. */}
+        <ProjectedFigure geometry={geometry} height={FIGURE_HEIGHT} />
 
         <Figure geometry={geometry} centreY={0} height={FIGURE_HEIGHT} />
 
