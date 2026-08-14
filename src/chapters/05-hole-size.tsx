@@ -23,8 +23,9 @@ import { Meter } from '../shell/Meter'
  * sweet spot between them is the whole point of the chapter. The shader
  * integrates over the aperture, so the child finds that spot by looking.
  *
- * The slider is logarithmic. On a linear one the sharpest hole sits at 6 % of
- * the track and a child sweeps straight past it.
+ * The slider is logarithmic, and `logScale` says why with the figure — which is
+ * where the figure belongs, since it is a property of the track. Written out
+ * here as well it went stale the first time a constant moved, twice.
  */
 
 /*
@@ -49,7 +50,8 @@ import { Meter } from '../shell/Meter'
 const BOX_LENGTH_MM = 300
 const OBJECT_DISTANCE_MM = 30_000
 const WALL_HEIGHT_MM = 240
-const MIN_HOLE_MM = 0.05
+/** Exported so `logScale`'s test can walk the track this chapter actually uses. */
+export const MIN_HOLE_MM = 0.05
 /**
  * The wide end has to fail as badly as the narrow one, or the chapter only
  * teaches half of its own thesis.
@@ -61,7 +63,7 @@ const MIN_HOLE_MM = 0.05
  * blurred picture than "Trop petit". At 8 mm the two ends meet again at 3.4 %,
  * and the best hole lands on the exact centre of the track.
  */
-const MAX_HOLE_MM = 8
+export const MAX_HOLE_MM = 8
 
 const holeScale = logScale(MIN_HOLE_MM, MAX_HOLE_MM)
 

@@ -64,11 +64,15 @@ test('sliders move and the narration follows', async ({ page }) => {
   await slider.fill('1')
   const wideOpen = await narration.textContent()
 
-  await slider.fill('0.43')
+  // The centre of the track, which is where the best hole sits. It was 0.43,
+  // correct for a 100 mm box on a 0.05–5 mm range and quietly wrong for every
+  // range since — the variable went on being called `sweetSpot` while landing
+  // on the generic line, and a test that only asks for "different" never said so.
+  await slider.fill('0.5')
   const sweetSpot = await narration.textContent()
 
   expect(wideOpen).not.toBe(sweetSpot)
-  expect(sweetSpot).toBeTruthy()
+  expect(sweetSpot).toMatch(/plus net possible|as sharp as it can be/)
 })
 
 /** Geometry read back off an SVG circle, so a sign error has somewhere to fail. */

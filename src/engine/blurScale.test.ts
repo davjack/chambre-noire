@@ -8,23 +8,24 @@ import {
 } from '../physics/optics'
 import { blurRadii, type PinholeParams } from './blurScale'
 
+/** Chapter 5's own geometry: the shoebox it models, not a copy that drifts. */
 const chapterFive: PinholeParams = {
-  holeDiameter: 0.4,
-  boxLength: 100,
-  objectDistance: 4000,
-  wallHeight: 80,
+  holeDiameter: 0.63,
+  boxLength: 300,
+  objectDistance: 30_000,
+  wallHeight: 240,
   exposure: 1,
 }
 
 describe('blurRadii', () => {
   it('is exactly half the physical blur, divided by the wall height', () => {
     const { geometric, diffraction } = blurRadii(chapterFive)
-    expect(geometric).toBeCloseTo(geometricBlur(0.4, 100, 4000) / 2 / 80, 12)
-    expect(diffraction).toBeCloseTo(diffractionBlur(0.4, 100) / 2 / 80, 12)
+    expect(geometric).toBeCloseTo(geometricBlur(0.63, 300, 30_000) / 2 / 240, 12)
+    expect(diffraction).toBeCloseTo(diffractionBlur(0.63, 300) / 2 / 240, 12)
   })
 
   it('keeps both radii small enough to sample inside the texture', () => {
-    for (const holeDiameter of [0.05, 0.36, 1, 5]) {
+    for (const holeDiameter of [0.05, 0.63, 1, 8]) {
       const { geometric, diffraction } = blurRadii({ ...chapterFive, holeDiameter })
       expect(geometric).toBeGreaterThan(0)
       expect(geometric).toBeLessThan(0.5)
@@ -61,6 +62,9 @@ describe('blurRadii', () => {
 
   it('agrees with totalBlur once the halving and the wall are undone', () => {
     const { geometric, diffraction } = blurRadii(chapterFive)
-    expect(Math.hypot(geometric, diffraction) * 2 * 80).toBeCloseTo(totalBlur(chapterFive), 10)
+    expect(Math.hypot(geometric, diffraction) * 2 * chapterFive.wallHeight).toBeCloseTo(
+      totalBlur(chapterFive),
+      10,
+    )
   })
 })

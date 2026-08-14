@@ -149,9 +149,10 @@ export function optimalHoleDiameterFor(setup: PinholeSetup): number {
 
 /**
  * f-number N = f / d. The photographer's name for "how dim this is".
- * A shoebox pinhole typically lands around f/200 — a thousand times dimmer
- * than a phone camera, which is why the chapter on hole size has to show the
- * darkness rather than hide it.
+ * A 30 cm shoebox at its sharpest hole — 0.63 mm — lands near f/475, thousands
+ * of times dimmer than a phone camera, which is why the chapter on hole size has
+ * to show the darkness rather than hide it. That figure follows from `f` alone,
+ * so it does not go stale when a chapter picks a different box.
  */
 export function fNumber(holeDiameter: number, boxLength: number): number {
   return positive(boxLength) / positive(holeDiameter)

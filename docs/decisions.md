@@ -132,11 +132,24 @@ its own change one day.
 
 It was worth more than that. The blur at the best hole falls as the box grows, so
 those three chapters disagreeing about the size were also the reason chapter 5
-looked broken beside chapter 0. Chapter 5 now models 300 mm with a 240 mm wall —
-the same 0.8 ratio, so the framing does not move — and chapter 6 reads out 12 to
-38 cm instead of 6 to 19, which is a relabelling and nothing more: its scene
-units are unchanged, and `MM_PER_UNIT` cancels out of its brightness meter, which
-was checked in pixels rather than argued from the algebra. The best hole moves
+looked broken beside chapter 0. Chapter 5 now models 300 mm with a 240 mm wall,
+and chapter 6 reads out 12 to 38 cm instead of 6 to 19 — a relabelling and
+nothing more: its scene units are unchanged, and `MM_PER_UNIT` cancels out of its
+brightness meter, which was checked in pixels rather than argued from the
+algebra. The wall keeps its 0.8 of the box, which does not hold the framing —
+the shader fills the wall with the whole scene whatever either measures, so the
+framing never moves — but holds the comparison, so that a blur quoted as a
+fraction of the picture means the same thing on every screen.
+
+Tripling the box also divided the geometric blur by three while diffraction,
+which goes as `f / wall`, stayed exactly where it was. The wide end of the slider
+fell from 6.41 % of the picture to 2.10 % while the narrow end held at 3.36 %, so
+*Grand trou : c'est bien clair, mais tout flou* was being said over a picture
+less blurred than the one *Trop petit* is said over — half of this chapter's own
+thesis, inverted, and invisible to a measurement that only looked at the optimum.
+The widest hole is 8 mm instead of 5: the two ends meet again at 3.4 %, the
+sharpness meter reads 11 % at both, and the best hole falls on the exact centre
+of the logarithmic track, which is what that track was built for. The best hole moves
 from 0.36 mm to 0.63 mm, which is the better answer for a shoebox and still a
 needle.
 

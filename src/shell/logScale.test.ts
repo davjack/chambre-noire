@@ -1,25 +1,31 @@
 import { describe, expect, it } from 'vitest'
 
+import { MAX_HOLE_MM, MIN_HOLE_MM } from '../chapters/05-hole-size'
 import { logScale } from './logScale'
 
-const hole = logScale(0.05, 5)
+/*
+ * The track chapter 5 actually renders, not a copy of it. Copied, the fixture
+ * stayed at 0.05–5 while the chapter moved to 0.05–8, and the assertion below
+ * went on passing against a scale nothing draws.
+ */
+const hole = logScale(MIN_HOLE_MM, MAX_HOLE_MM)
 
 describe('logScale', () => {
   it('pins both ends of the track', () => {
-    expect(hole.toSlider(0.05)).toBeCloseTo(0, 12)
-    expect(hole.toSlider(5)).toBeCloseTo(1, 12)
-    expect(hole.toValue(0)).toBeCloseTo(0.05, 12)
-    expect(hole.toValue(1)).toBeCloseTo(5, 12)
+    expect(hole.toSlider(MIN_HOLE_MM)).toBeCloseTo(0, 12)
+    expect(hole.toSlider(MAX_HOLE_MM)).toBeCloseTo(1, 12)
+    expect(hole.toValue(0)).toBeCloseTo(MIN_HOLE_MM, 12)
+    expect(hole.toValue(1)).toBeCloseTo(MAX_HOLE_MM, 12)
   })
 
   it('round-trips', () => {
-    for (const value of [0.05, 0.1, 0.36, 1, 2.5, 5]) {
+    for (const value of [MIN_HOLE_MM, 0.1, 0.63, 1, 2.5, MAX_HOLE_MM]) {
       expect(hole.toValue(hole.toSlider(value))).toBeCloseTo(value, 10)
     }
   })
 
   it('puts the geometric mean in the middle, which is the whole point', () => {
-    expect(hole.toValue(0.5)).toBeCloseTo(Math.sqrt(0.05 * 5), 10)
+    expect(hole.toValue(0.5)).toBeCloseTo(Math.sqrt(MIN_HOLE_MM * MAX_HOLE_MM), 10)
   })
 
   it('lands the sharpest hole near the centre of the track', () => {
