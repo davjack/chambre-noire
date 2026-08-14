@@ -94,16 +94,24 @@ possible !"
 The first number cannot be answered. At the best hole the geometric and the
 diffraction terms are equal, so the total is `√(4.88·λ·f·k)` with
 `k = (f + u) / u` — 2.24·√(λf) for chapter 5, where `k` is 1.025. Over the wall,
-and holding a chapter's own wall-to-box ratio, that falls as `1/√f`: the only
-lever is a bigger box, and it pays as a square root.
+holding a chapter's own wall-to-box ratio **and its `k`**, that falls as `1/√f`:
+the only lever is a bigger box, and it pays as a square root.
 
 The two chapters are not quite the same shape — chapter 5 puts its wall at 0.80
 of its box, chapter 0 at 0.75 — so the comparison is between the models rather
 than along one curve: **0.656 % of the wall for chapter 5 against 0.160 % for
-chapter 0**, a factor 4.1, so `f × 16.8` — a **1.7 m chamber**. (Measured on
-screen the two come out at 0.555 % and 0.152 %; the ramp of an edge is a proxy
-for the blur, not the blur, and the two canvases are different sizes, so the
-model is what the arithmetic above uses.)
+chapter 0**, a factor 4.1, so `f × 16.8`.
+
+That gives a **1.7 m chamber only if the subject moves back with the box**, which
+is what chapter 0 does — its house stands at 30 m for a 2 m box, fifteen box
+lengths away, exactly as chapter 5's stands at 4 m for 100 mm. Grow the box alone
+and `k` grows with it, the `1/√f` law stops holding, and the answer is worse:
+with the house left at 4 m, matching chapter 0 takes **2.8 m of box**. Either
+way the number is metres, and the point stands.
+
+(Measured on screen the two chapters come out at 0.555 % and 0.152 %; the ramp of
+an edge is a proxy for the blur, not the blur, and the two canvases are different
+sizes, so the model is what the arithmetic above uses.)
 
 Chapter 5 is deliberately a box you can hold, which chapter 6 (60 to 190 mm),
 chapter 8 and chapter 9 all depend on. Asked to choose, the reader chose
