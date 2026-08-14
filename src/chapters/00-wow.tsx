@@ -17,9 +17,11 @@ import { ChapterShell } from '../shell/ChapterShell'
  * A room, not a shoebox — the chamber this app is named after.
  *
  * The shader maps the whole scene onto the whole wall whatever these numbers
- * say, so they set exactly two things: how blurred the picture is, and how much
- * light reaches the wall. Scaling the box and the wall together therefore keeps
- * the framing and divides the relative blur by the square root of the factor.
+ * say, and the exposure below is pinned to 1 — the eye of someone who has been
+ * standing in the chamber a while. So on this screen they set exactly one
+ * thing: how blurred the picture is. Scaling the box and the wall together
+ * therefore keeps the framing and divides the relative blur by the square root
+ * of the factor.
  * That is not a trick to make the picture look better: a two-metre camera
  * obscura really is four times sharper than an eleven-centimetre one, for the
  * same reason a longer box needs a bigger hole.

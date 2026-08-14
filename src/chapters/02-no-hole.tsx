@@ -12,6 +12,7 @@ import {
 } from '../engine/RayDiagram'
 import { createGeometry } from '../engine/geometry'
 import { useT } from '../i18n/useT'
+import { geometricBlur, imageHeight } from '../physics/optics'
 import { BigSlider } from '../shell/BigSlider'
 import { ChapterShell } from '../shell/ChapterShell'
 
@@ -30,8 +31,19 @@ const BOX_LENGTH = 300
 const FIGURE_HEIGHT = 250
 /** Above this the child has not moved the slider yet. */
 const UNTOUCHED_ABOVE = 340
-/** Below this the wall starts showing something again. */
-const WIDE_ENOUGH = 150
+/**
+ * Below this the wall starts showing something again — and not by taste: it is
+ * the window at which the smear one point paints is exactly as tall as the
+ * picture, which is where `ProjectedFigure` stops fading him out.
+ * `geometricBlur` at a unit aperture is the band one unit of window paints, so
+ * dividing the picture's height by it gives the window that just erases it.
+ *
+ * It used to be a round 150, and for the fifty units between the two the line
+ * being read aloud promised a picture the wall was not yet showing.
+ */
+const WIDE_ENOUGH =
+  imageHeight(FIGURE_HEIGHT, BOX_LENGTH, OBJECT_DISTANCE) /
+  geometricBlur(1, BOX_LENGTH, OBJECT_DISTANCE)
 const WASH_POINTS = [
   -0.45, -0.375, -0.3, -0.225, -0.15, -0.075, 0, 0.075, 0.15, 0.225, 0.3, 0.375, 0.45,
 ]
@@ -99,8 +111,8 @@ export function NoHoleChapter() {
 
           {/* The picture that is not there. Every point of him is spread over a
               band taller than he is, so `ProjectedFigure` fades him to nothing
-              — and he only starts coming back as the window closes, which is
-              exactly what the third line of narration promises. */}
+              — and he starts coming back at `WIDE_ENOUGH`, the same window
+              where the line being read aloud says he does. */}
           <ProjectedFigure
             geometry={geometry}
             height={FIGURE_HEIGHT}

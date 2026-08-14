@@ -48,35 +48,48 @@ function useSafeId(): string {
  * is confined, exactly as a real box confines it.
  */
 /**
- * How far the chamber runs past the back wall. Exported with `boxInnerWidth`
- * so a chapter filling the chamber — a light leak, a wash — covers exactly what
- * `Box` clips to, instead of recopying the number and quietly falling short of
- * it later.
+ * How far the chamber runs past the back wall, once a picture is painted on it.
  *
- * It used to be 18: the sixteen units of wall, and two to spare. That was
- * enough for as long as nothing was painted on the wall but coloured bands. A
- * `ProjectedFigure` is a figure, and its outstretched arms reach `0.19` of its
+ * A `ProjectedFigure` is a figure, and its outstretched arms reach `0.19` of its
  * height either side of the wall — up to 38 units on the longest box chapter 6
- * offers, which the old margin cut off flush, leaving one arm and a straight
- * edge where the other should be.
+ * offers. Anything less cuts one arm off flush and leaves a straight edge where
+ * the other one is.
  */
 export const BOX_BACK_MARGIN = 40
 
+/**
+ * The same, for a chamber with nothing on its wall but bands: the sixteen units
+ * of wall, and two to spare.
+ *
+ * Kept separate because the margin does two jobs — how much room the picture
+ * needs, and how far past the wall the chamber is drawn — and only one chapter
+ * has a reason to care about the second. *Comment marche ta boîte* sets its
+ * face-on panel 16 units past the box; widening every chamber for a picture
+ * that chapter does not draw slid the two views into each other.
+ */
+export const BOX_BACK_MARGIN_BARE = 18
+
 /** Width of the chamber a `Box` draws, from the hole to past the back wall. */
-export function boxInnerWidth(geometry: SceneGeometry): number {
-  return geometry.wallX - geometry.holeX + BOX_BACK_MARGIN
+export function boxInnerWidth(
+  geometry: SceneGeometry,
+  backMargin: number = BOX_BACK_MARGIN,
+): number {
+  return geometry.wallX - geometry.holeX + backMargin
 }
 
 export function Box({
   geometry,
   apertureHeight,
   halfHeight = 210,
+  backMargin = BOX_BACK_MARGIN,
   children,
 }: {
   geometry: SceneGeometry
   /** Visual height of the opening, in scene units. */
   apertureHeight: number
   halfHeight?: number
+  /** `BOX_BACK_MARGIN_BARE` for a chamber with no picture painted on its wall. */
+  backMargin?: number
   children?: ReactNode
 }) {
   const clipId = useSafeId()
@@ -84,7 +97,7 @@ export function Box({
   const half = apertureHeight / 2
   const top = axisY - halfHeight
   const bottom = axisY + halfHeight
-  const innerWidth = boxInnerWidth(geometry)
+  const innerWidth = boxInnerWidth(geometry, backMargin)
 
   return (
     <g>
@@ -377,11 +390,19 @@ export function Figure({
  * reaching it are the same claim about the same box rather than two.
  *
  * `blur` is the height of the band one point of the object paints — the
- * geometric blur. Pass `geometry.band(centreY).height` on the chapters where
- * the aperture is what the child is moving, and nothing where it is fixed and
- * small. A uniform disc of that diameter has a standard deviation of a quarter
- * of it, which is the honest way to spell a disc as a Gaussian and the same
- * approximation the 2D canvas fallback already documents.
+ * geometric blur. Pass `geometry.band(0).height` on the chapters where the
+ * aperture is what the child is moving, and nothing where it is fixed and
+ * small; the band is the same height for every point of the object, so which
+ * one it is asked about does not matter.
+ *
+ * It spreads the picture **vertically only**, and that is not an economy. The
+ * hole paints a disc on the wall, and these are side views: a disc on a wall
+ * seen edge on is a vertical segment, exactly as chapter 3 draws its bands and
+ * chapter 8 its lit strip. Blurring sideways would be spreading the picture
+ * through the thickness of the wall. A uniform disc of that diameter has a
+ * standard deviation of a quarter of it, which is the honest way to spell a
+ * disc as a Gaussian and the same approximation the 2D canvas fallback
+ * documents.
  */
 export function ProjectedFigure({
   geometry,
@@ -427,11 +448,20 @@ export function ProjectedFigure({
   return (
     <>
       <defs>
-        {/* The default filter region is 120 % of the bounding box, and a blur
-            this wide runs well past it: cropped there, a smear that should fade
-            out ends in four straight edges and a corner. */}
-        <filter id={filterId} x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation={blur / 4} />
+        {/*
+          The region has to be given, and given generously downwards and
+          upwards. The default is 120 % of the bounding box, and a filter is
+          cropped to its region: a smear that should fade out would end in a
+          straight edge instead.
+
+          Sideways the default would do, since nothing spreads there. Vertically
+          the blur reaches about 2.8 standard deviations, i.e. 0.7 of `blur`,
+          and `blur` is never more than the picture is tall — the fade above
+          sees to that — so one whole bounding box of margin, itself slightly
+          taller than the picture, always covers it.
+        */}
+        <filter id={filterId} x="-10%" y="-100%" width="120%" height="300%">
+          <feGaussianBlur stdDeviation={`0 ${blur / 4}`} />
         </filter>
       </defs>
       <g filter={`url(#${filterId})`}>{figure}</g>

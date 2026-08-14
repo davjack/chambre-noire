@@ -32,6 +32,13 @@ const HOLE_MM = 0.4
 const MIN_LENGTH = 120
 const MAX_LENGTH = 380
 const MM_PER_UNIT = 0.5
+/**
+ * Left of the shared default, because this is the only chapter whose box grows.
+ * At the long end it runs `MAX_LENGTH` plus the chamber's back margin past the
+ * hole, and from the usual 580 that lands exactly on the edge of the viewBox —
+ * a box that reads as cut off by the frame rather than as a long box.
+ */
+const HOLE_X = 555
 
 export function BoxLengthChapter() {
   const t = useT()
@@ -41,6 +48,7 @@ export function BoxLengthChapter() {
     objectDistance: OBJECT_DISTANCE,
     boxLength,
     apertureDiameter: 10,
+    holeX: HOLE_X,
   })
 
   // 1 scene unit = 0.5 mm, so the drawn box has a real length and a real

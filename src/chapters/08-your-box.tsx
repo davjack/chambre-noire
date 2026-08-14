@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import {
+  BOX_BACK_MARGIN_BARE,
   BackWall,
   Box,
   CentreRay,
@@ -175,7 +176,16 @@ export function YourBoxChapter() {
         <circle cx={sun.x} cy={sun.y} r={SUN_RADIUS} fill="var(--color-ray)" />
 
         {/* ── The box, opened along its length ────────────────────────────── */}
-        <Box geometry={geometry} apertureHeight={APERTURE} halfHeight={BOX_HALF_HEIGHT}>
+        {/* Nothing is painted on this wall but a strip seen edge on, so the
+            chamber stops just past it. The wider default would run the box's
+            rails under the panel on the right, and the two views are meant to
+            be two views. */}
+        <Box
+          geometry={geometry}
+          apertureHeight={APERTURE}
+          halfHeight={BOX_HALF_HEIGHT}
+          backMargin={BOX_BACK_MARGIN_BARE}
+        >
           <BackWall geometry={geometry} glow={leaking ? 0.6 : 0.15} halfHeight={BOX_HALF_HEIGHT} />
 
           {/* The two rays that bracket the picture: from the top and bottom
@@ -234,7 +244,7 @@ export function YourBoxChapter() {
               <rect
                 x={holeX}
                 y={top}
-                width={boxInnerWidth(geometry)}
+                width={boxInnerWidth(geometry, BOX_BACK_MARGIN_BARE)}
                 height={BOX_HALF_HEIGHT * 2}
                 fill="var(--color-ray)"
                 opacity={0.07}

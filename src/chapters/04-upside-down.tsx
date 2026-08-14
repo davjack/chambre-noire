@@ -114,9 +114,12 @@ export function UpsideDownChapter() {
             if (!landmark) return null
             const image = top.toSvg({ x: top.boxLength, y: top.landing(lateral, 0) })
             return (
+              // On the face of the wall, where the side view above puts its
+              // picture: the two panels are one crossing seen twice, so they
+              // cannot land it in two places.
               <Mark
                 key={lateral}
-                x={image.x + 8}
+                x={image.x}
                 y={image.y}
                 colour={MARK_COLOURS[landmark.key]}
                 shape={landmark.shape}
