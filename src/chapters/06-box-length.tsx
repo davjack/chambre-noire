@@ -63,7 +63,7 @@ export function BoxLengthChapter() {
     holeX: HOLE_X,
   })
 
-  // 1 scene unit = 0.5 mm, so the drawn box has a real length and a real
+  // One scene unit is `MM_PER_UNIT`, so the drawn box has a real length and a real
   // f-number. Brightness is quoted relative to the shortest box the slider
   // offers, which is what the child is comparing against.
   const relative =

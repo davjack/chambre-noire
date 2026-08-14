@@ -33,19 +33,35 @@ import { Meter } from '../shell/Meter'
  *
  * It used to be 10 cm, below both, and that cost more than tidiness. The blur at
  * the best hole goes as `√(4.88·λ·f·k)` over the wall, so it falls with a bigger
- * box: 0.66 % of the wall's height at 10 cm against 0.39 % here. Nothing else in
+ * box: 0.66 % of the wall's height at 10 cm against 0.38 % here. Nothing else in
  * this chapter can touch that number — at the optimum the geometric and the
- * diffraction terms are equal by definition, and the wall keeps its 0.8 of the
- * box so the framing does not move.
+ * diffraction terms are equal by definition.
+ *
+ * The wall keeps its 0.8 of the box. That does not hold the framing — the shader
+ * fills the wall with the whole scene whatever the two measure, so the framing
+ * never moves — it holds the *comparison*: a blur quoted as a fraction of the
+ * picture means the same thing on this screen as on any other.
  *
  * The house stands at 30 m, where chapter 0 already puts it. It is the same
- * drawing; it was at 4 m here, which no house of that size can be.
+ * drawing; it was at 4 m here, where a house this wide would have to be 1.5 m
+ * across.
  */
 const BOX_LENGTH_MM = 300
 const OBJECT_DISTANCE_MM = 30_000
 const WALL_HEIGHT_MM = 240
 const MIN_HOLE_MM = 0.05
-const MAX_HOLE_MM = 5
+/**
+ * The wide end has to fail as badly as the narrow one, or the chapter only
+ * teaches half of its own thesis.
+ *
+ * The narrow end is fixed: diffraction goes as `f / wall`, and the wall keeps
+ * its 0.8 of the box, so it sits at 3.36 % of the picture whatever the box.
+ * The wide end goes as `d · k / wall` — it fell to 2.10 % when the box tripled,
+ * which put "Grand trou : c'est bien clair, mais tout flou" over a *less*
+ * blurred picture than "Trop petit". At 8 mm the two ends meet again at 3.4 %,
+ * and the best hole lands on the exact centre of the track.
+ */
+const MAX_HOLE_MM = 8
 
 const holeScale = logScale(MIN_HOLE_MM, MAX_HOLE_MM)
 
@@ -75,7 +91,7 @@ export function HoleSizeChapter() {
   /*
    * On by default, and that is the realistic setting, not the forgiving one:
    * someone standing inside a camera obscura *does* adapt, and sees the image
-   * perfectly well. Left off, the sharpest hole renders almost black — f/278 —
+   * perfectly well. Left off, the sharpest hole renders almost black — f/475 —
    * and the chapter's own lesson becomes invisible at the exact point it is
    * being made. Turning it off is the reveal: "look how little light there
    * really is". The brightness meter tells the true story either way.
