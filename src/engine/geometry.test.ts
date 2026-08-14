@@ -1,7 +1,14 @@
 import { describe, expect, it } from 'vitest'
 
 import { geometricBlur, imageHeight, projectPoint } from '../physics/optics'
-import { AXIS_Y, HOLE_X, bandHeightMatchesBlur, createGeometry, imagePlacement } from './geometry'
+import {
+  AXIS_Y,
+  HOLE_X,
+  bandHeightMatchesBlur,
+  createGeometry,
+  imagePlacement,
+  pictureFade,
+} from './geometry'
 
 const geometry = createGeometry({
   objectDistance: 440,
@@ -64,6 +71,25 @@ describe('scene geometry', () => {
       const drawnFromTheCentre = placement.centreY - offset * placement.height
       expect(drawnFromTheCentre).toBeCloseTo(geometry.landing(40 + offset * 250, 0), 10)
     }
+  })
+
+  it('draws the whole picture through a pinhole and none of it through a window', () => {
+    /*
+     * Zero exactly where one point of the object covers the whole picture — not
+     * near it. Chapter 2 reads this number to choose which line to say, so a
+     * threshold that drifted would have the app promising a picture the wall is
+     * not showing, which is what it used to do.
+     */
+    for (const apertureDiameter of [0.01, 1, 10, 50, 100, 102, 103, 150, 300, 400]) {
+      const scene = createGeometry({ objectDistance: 430, boxLength: 300, apertureDiameter })
+      const surviving = pictureFade(scene.band(0).height, scene.imageHeight(250))
+      const nothingLeft = scene.band(0).height >= scene.imageHeight(250)
+
+      expect(surviving === 0).toBe(nothingLeft)
+    }
+
+    const pinhole = createGeometry({ objectDistance: 430, boxLength: 300, apertureDiameter: 0.01 })
+    expect(pictureFade(pinhole.band(0).height, pinhole.imageHeight(250))).toBeCloseTo(1, 3)
   })
 
   it('grows the image with the box length', () => {

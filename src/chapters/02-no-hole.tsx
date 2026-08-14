@@ -10,9 +10,8 @@ import {
   ProjectedFigure,
   Scene,
 } from '../engine/RayDiagram'
-import { createGeometry } from '../engine/geometry'
+import { createGeometry, pictureFade } from '../engine/geometry'
 import { useT } from '../i18n/useT'
-import { geometricBlur, imageHeight } from '../physics/optics'
 import { BigSlider } from '../shell/BigSlider'
 import { ChapterShell } from '../shell/ChapterShell'
 
@@ -31,19 +30,13 @@ const BOX_LENGTH = 300
 const FIGURE_HEIGHT = 250
 /** Above this the child has not moved the slider yet. */
 const UNTOUCHED_ABOVE = 340
-/**
- * Below this the wall starts showing something again — and not by taste: it is
- * the window at which the smear one point paints is exactly as tall as the
- * picture, which is where `ProjectedFigure` stops fading him out.
- * `geometricBlur` at a unit aperture is the band one unit of window paints, so
- * dividing the picture's height by it gives the window that just erases it.
- *
- * It used to be a round 150, and for the fifty units between the two the line
- * being read aloud promised a picture the wall was not yet showing.
+/*
+ * There is no threshold constant for "the wall is showing something again": the
+ * chapter asks `pictureFade` how much of him survives, which is the number
+ * `ProjectedFigure` draws him with. It used to be a round 150 while the drawing
+ * stopped at 102.7, so for fifty units of the slider the line being read aloud
+ * promised a picture the wall was not yet showing.
  */
-const WIDE_ENOUGH =
-  imageHeight(FIGURE_HEIGHT, BOX_LENGTH, OBJECT_DISTANCE) /
-  geometricBlur(1, BOX_LENGTH, OBJECT_DISTANCE)
 const WASH_POINTS = [
   -0.45, -0.375, -0.3, -0.225, -0.15, -0.075, 0, 0.075, 0.15, 0.225, 0.3, 0.375, 0.45,
 ]
@@ -58,13 +51,17 @@ export function NoHoleChapter() {
     apertureDiameter: windowSize,
   })
 
+  // How much of him the wall is showing — the same number the picture is drawn
+  // with, so what is said and what is on screen change together.
+  const picture = pictureFade(geometry.band(0).height, geometry.imageHeight(FIGURE_HEIGHT))
+
   // Three plainly named bands, in the order the child crosses them.
   const narration =
     windowSize > UNTOUCHED_ABOVE
       ? 'chapter.no-hole.say'
-      : windowSize > WIDE_ENOUGH
-        ? 'chapter.no-hole.say.wide'
-        : 'chapter.no-hole.say.narrow'
+      : picture > 0
+        ? 'chapter.no-hole.say.narrow'
+        : 'chapter.no-hole.say.wide'
 
   return (
     <ChapterShell

@@ -220,8 +220,20 @@ three landmarks, at exactly the points the separate ones occupied.
 Gaussian of a quarter of that (the standard deviation of a uniform disc of that
 diameter). And it fades to nothing once that band is taller than the picture is,
 which is what keeps chapter 2 honest: at the wide end there is no picture and
-none is drawn, and the figure only surfaces as the window closes — which is what
-that chapter's third narrated line has always promised and never showed.
+none is drawn. That threshold is also where the narration changes, and not by
+coincidence — `WIDE_ENOUGH` is computed from it, so the line that says the wall
+is starting to show something is spoken at the window where it starts to.
+
+**The blur spreads vertically only**, and that is the more correct answer rather
+than the cheaper one. These are side views: the wall is seen edge on, so the disc
+the hole paints on it appears as a vertical segment — which is exactly how
+chapter 3 draws its bands and chapter 8 its lit strip. Blurring sideways as well
+was spreading the picture through the thickness of the wall, and it cost
+something real: an `feGaussianBlur` is cropped to its filter region, whose margin
+scales with the bounding box while the blur scales with the picture's height, so
+around a fifty-unit hole in chapter 3 the horizontal half of the smear ended in
+two straight vertical edges. A wider region would have hidden that; taking the
+horizontal spread out removes it.
 
 **It is not blurred in *Ton œil est une boîte noire*.** An eye has a lens. A
 wide pupil in a dark room lets more of the world in without smearing it, and
@@ -240,7 +252,14 @@ needs chapter 8's second panel, not this.
 
 The chamber runs 40 units past the back wall rather than 18, because a figure
 has arms: they reach 0.19 of its height either side, and the old margin cut one
-of them off flush at the longest box chapter 6 offers.
+of them off flush at the longest box chapter 6 offers. That margin is a `Box`
+prop rather than one shared constant, because it does two jobs — how much room
+the picture needs, and how far past the wall the chamber is drawn — and *Comment
+marche ta boîte* only cares about the second: it paints no figure on its wall,
+and the wider chamber ran the box's rails under the face-on panel it keeps
+deliberately separate. It asks for `BOX_BACK_MARGIN_BARE`. Chapter 6, whose box
+grows, draws from `holeX = 555` so the long end stops short of the frame instead
+of on it.
 
 ## Colour and contrast
 

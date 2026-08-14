@@ -1,6 +1,12 @@
 import { useId, type ReactNode } from 'react'
 
-import { VIEW_HEIGHT, VIEW_WIDTH, imagePlacement, type SceneGeometry } from './geometry'
+import {
+  VIEW_HEIGHT,
+  VIEW_WIDTH,
+  imagePlacement,
+  pictureFade,
+  type SceneGeometry,
+} from './geometry'
 
 /**
  * The drawing kit every chapter shares.
@@ -426,10 +432,7 @@ export function ProjectedFigure({
   const filterId = useSafeId()
   const image = imagePlacement(geometry, centreY, height)
 
-  // Once one point of the object smears across the whole picture there is
-  // nothing left to recognise. Drawing a smear anyway would claim otherwise,
-  // on the one chapter whose thesis is that a wide window gives no picture.
-  const fade = image.height > 0 ? Math.max(0, Math.min(1, 1 - blur / image.height)) : 0
+  const fade = pictureFade(blur, image.height)
   if (fade <= 0) return null
 
   const figure = (

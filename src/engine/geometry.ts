@@ -126,6 +126,23 @@ export function imagePlacement(
 }
 
 /**
+ * How much of the picture is worth drawing at all, 0 to 1.
+ *
+ * One at a pinhole, and zero once a single point of the object smears across
+ * the whole picture: past there nothing is left to recognise, and drawing a
+ * smear anyway would claim otherwise on the chapter whose thesis is that a wide
+ * window gives no picture.
+ *
+ * Exported because that chapter reads the same number to choose which line to
+ * say. Written out twice it was written out differently, and the app spent
+ * fifty units of its slider promising a picture the wall was not showing.
+ */
+export function pictureFade(blur: number, imageHeight: number): number {
+  if (imageHeight <= 0) return 0
+  return Math.max(0, Math.min(1, 1 - blur / imageHeight))
+}
+
+/**
  * The lit band and the geometric blur are the same quantity seen twice. Exposed
  * so the unit tests can hold the drawing to the physics.
  */
